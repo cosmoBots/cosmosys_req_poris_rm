@@ -1,5 +1,5 @@
 Redmine::Plugin.register :cosmosys_req_poris do
-  name 'Cosmosys Req plugin'
+  name 'Cosmosys PORIS plugin'
   author 'Txinto Vaz'
   description 'A plugin to activate PORIS features of the cosmosys_req plugin.'
   version '0.0.1'
