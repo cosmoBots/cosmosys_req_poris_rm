@@ -3,7 +3,7 @@ class AddPrCmd < ActiveRecord::Migration[5.2]
   
 		t2 = Tracker.find_by_name("prCmd")
 		# This is for the case prCmd has been already created by hand
-		if t2 != nil then
+		if t2 == nil then
 			t = Tracker.find_by_name("prValue")
 			
 			# prCmd
