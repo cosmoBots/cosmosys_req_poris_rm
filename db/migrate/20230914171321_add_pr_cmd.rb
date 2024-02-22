@@ -1,17 +1,21 @@
 class AddPrCmd < ActiveRecord::Migration[5.2]
 	def up
   
-		t = Tracker.find_by_name("prValue")
+		t2 = Tracker.find_by_name("prCmd")
+		# This is for the case prCmd has been already created by hand
+		if t2 == nil then
+			t = Tracker.find_by_name("prValue")
+			
+			# prCmd
+			prCmd = Tracker.new
+			prCmd.name = "prCmd"
+			prCmd.copy_from(t)
+			prCmd.save
+			prCmd.copy_workflow_rules(t)
 		
-		# prCmd
-		prCmd = Tracker.new
-		prCmd.name = "prCmd"
-		prCmd.copy_from(t)
-		prCmd.save
-		prCmd.copy_workflow_rules(t)
-		
-		rqsrclabelfield = IssueCustomField.find_by_name('prSrcLabel')
-    rqsrclabelfield.tracker_ids << prCmd.id
+			rqsrclabelfield = IssueCustomField.find_by_name('prSrcLabel')
+		    rqsrclabelfield.tracker_ids << prCmd.id
+		end
 	end
   
 	def change_issues_from_tracker(srctracker,desttracker)
