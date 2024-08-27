@@ -1,0 +1,200 @@
+
+#content > div.cSysProject > table > tbody > tr > td {
+  background: white;
+  border: white;
+}
+
+body > div > table > tbody > tr > td > div > table {
+  border-style: solid !important;
+  border-width: 0.5px !important;
+  border-spacing: 0px;
+  background-color: white;
+}
+
+div > table {
+  background-color: aliceblue !important;
+  border-spacing: 0px;
+}
+div > table > thead{
+  background-color: lightblue !important;
+  border-spacing: 0px;
+}
+div > table > tbody > tr > td {
+  border-style: solid !important;
+  border-width: 0.5px !important;
+  border-spacing: 0px;
+  background-color: white;
+}
+
+div > table > thead > tr > th {
+  border-style: solid !important;
+  border-width: 0.5px !important;
+  border-spacing: 0px;
+}
+
+td.cf_1.string {
+    font-weight: bold;
+}
+td.description {
+    font-size: 100%;
+    font-weight: bold;
+}
+
+.cSysProject {
+    /*border: 1px solid darkgrey;*/
+    padding-left: 4px;
+}
+
+.cSysParentIssue {
+    /* border-top: 1px darkgrey; */
+    padding-left: 3px;
+    margin-left: 3px;
+    /*border-style: ridge;
+    border-bottom: hidden;
+    border-left: hidden;
+    border-right: hidden;
+    border: 1px solid darkgrey;*/
+    margin-bottom: 6px;
+    margin-top: 5px;
+}
+
+.cSysIssuedataColumn {
+  text-align: -webkit-right;
+}
+.cSysIssuedata {
+  /* background: aliceblue; */
+  /* border: lightgray; */
+  /* border-style: dashed; */
+  border-width: thin;
+}
+
+.cSysIssuedata td {
+  background-color: white;
+  border-width: thin;
+  color: gray;
+  font-size: xx-small;
+  font-style: italic;
+  text-align: right;
+}
+
+
+.cSysParentIssuedataColumn {
+  text-align: -webkit-right;
+}
+
+.cSysParentIssuedata {
+  /* background: aliceblue; */
+  /* border: lightgray; */
+  /* border-style: dashed; */
+  border-width: thin;
+}
+
+.cSysParentIssuedata td {
+  background-color: white;
+  border-width: thin;
+  color: gray;
+  font-size: xx-small;
+  font-style: italic;
+  text-align: right;
+}
+
+.cSysParentIssue :is(h2, h3, h4, h5, h6) {
+    padding-left: 4px;
+}
+
+.cSysParentIssuedescr {
+    padding-left: 3px;
+    padding: 0 18px;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: white;    
+}
+
+.cSysIssue {
+    /*border-top: 1px darkgrey;*/
+    padding-left: 3px;
+    margin-left: 4px;
+    /*border-style: dotted;
+    border-bottom: hidden;
+    border-left: hidden;
+    border-right: hidden;*/
+}
+
+h1, h2, h3, h4, h5, h6 { 
+  display: block;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+h1 { 
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+}
+
+h3 { 
+  font-size: 1.17em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+h4 { 
+  font-size: 1em;
+  margin-top: 1.33em;
+  margin-bottom: 1.33em;
+}
+
+h5 { 
+  font-size: .83em;
+  margin-top: 1.67em;
+  margin-bottom: 1.67em;
+}
+
+h6 { 
+  font-size: .67em;
+  margin-top: 2.33em;
+  margin-bottom: 2.33em;
+}
+
+.tablink {
+  background-color: lightblue;
+  color: white;
+  float: left;
+  border: 1px;
+  outline: none;
+  cursor: pointer;
+  width: 12em;
+  border-color: darkblue;
+  border-style: solid;
+}
+
+.tablink:hover {
+  background-color: dodgerblue;
+}
+
+/* Style the tab content */
+.tabcontent {
+  color: white;
+  display: none;
+  padding: 5px;
+  text-align: center;
+  border-style: solid;
+  border-color: gray;
+  border-width: thin;
+  background-color: white;
+}
+
+figure {
+  text-align: right;
+}
+
+p {
+  text-align: justify;
+}

@@ -10,6 +10,6 @@ class AddDepgraphflag < ActiveRecord::Migration[5.2]
         thiscv.value = rqdephgraphsfield.default_value
         i.save
       end
-    }    
+    }
   end
 end

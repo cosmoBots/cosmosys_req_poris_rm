@@ -10,4 +10,11 @@ Redmine::Plugin.register :cosmosys_req_poris do
   requires_redmine_plugin :cosmosys_git, :version_or_higher => '0.0.2'
   requires_redmine_plugin :cosmosys_req, :version_or_higher => '0.2.0'
 
+  permission :csys_poris_menu, :csys_poris => :menu
+  permission :csys_poris_form, :csys_poris => :form
+  permission :csys_poris_form_commit, :csys_poris => :form_commit
+
+  menu :project_menu, :csys_poris, {:controller => 'csys_poris', :action => 'menu' }, :caption => 'PORIS', :after => :activity, :param => :id
+
 end
+  
