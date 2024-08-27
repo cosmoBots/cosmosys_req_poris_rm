@@ -26,6 +26,7 @@ private def create_project_tree(current_issue, root_url, thisproject, thiskey)
   childrentypevector = thisproject.trackers.map{|t| t.name}
 
   # TODO: CHANGE THESE PATCHES BY A CALLBACK OR SOME PROPERTY, SO COSMOSYS DOES NOT KNOW ANYTHING ABOUT CSYSREQ
+
   childrentypevector += ["rqInfo","rqComplex","rqOpt","rqMech","rqHw","rqSw"] if childrentypevector.include?("rq")
 
   infobox = [
@@ -131,20 +132,7 @@ def create_tree(current_issue, root_url, is_project, thisproject, thiskey)
     create_nonproject_tree(current_issue, root_url, thisproject, thiskey)
 end
 
-
 # END ******************** Port this to PORIS JSON
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -191,8 +179,9 @@ end
         splitted_url = request.fullpath.split('/csys_poris')
         root_url = splitted_url[0]
 
-        tree_node = create_tree(thisnode,root_url,is_project,@project,u.api_key)
-
+        # tree_node = create_tree(thisnode,root_url,is_project,@project,u.api_key)
+        file = File.read('./plugins/cosmosys_req_poris/assets/sample.json')
+        tree_node = JSON.parse file
         treedata << tree_node
 
         ActiveSupport.escape_html_entities_in_json = false
