@@ -1,10 +1,10 @@
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'cosmosys_req_poris', :plugin => 'cosmosys_req_poris' %>
-    <%= stylesheet_link_tag 'treeview/index.0133e6a6', :plugin => 'cosmosys_req_poris' %>
+    <%= stylesheet_link_tag 'form/index.0133e6a6', :plugin => 'cosmosys_req_poris' %>
 <% end %>
 
 <div id="app"></div>
 
 <script>thiskey="<%=@key%>"</script>
-<script>treeviewpath="<%=@treeviewpath%>"</script>
-<%= javascript_include_tag 'treeview/index.8cdf0a09', :plugin => 'cosmosys_req_poris', :type => 'module' %>
+<script>formpath="<%=@formpath%>"</script>
+<%= javascript_include_tag 'form/index.8cdf0a09', :plugin => 'cosmosys_req_poris', :type => 'module' %>
