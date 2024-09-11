@@ -163,7 +163,7 @@ end
         @formpath = root_url+"/csys_poris/"+@project.identifier+"/form"
       }
 
-      format.json {
+      format.xml {
         treedata = []
         is_project = @issue ? false : true
 
@@ -180,12 +180,14 @@ end
         root_url = splitted_url[0]
 
         # tree_node = create_tree(thisnode,root_url,is_project,@project,u.api_key)
-        file = File.read('./plugins/cosmosys_req_poris/assets/sample.json')
-        tree_node = JSON.parse file
-        treedata << tree_node
+        # file = File.read('./plugins/cosmosys_req_poris/assets/sample.xml')
+        # tree_node = JSON.parse file
+        # treedata << tree_node
+        thismodel = ARCGenIIIPORIS.new(@project.id)
+
 
         ActiveSupport.escape_html_entities_in_json = false
-        render json: treedata
+        render xml: thismodel.toXML.to_s
         ActiveSupport.escape_html_entities_in_json = true
       }
     end
