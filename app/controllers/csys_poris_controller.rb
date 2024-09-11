@@ -134,9 +134,6 @@ end
 
 # END ******************** Port this to PORIS JSON
 
-
-
-
   def form
     require 'json'
 
@@ -183,7 +180,7 @@ end
         # file = File.read('./plugins/cosmosys_req_poris/assets/sample.xml')
         # tree_node = JSON.parse file
         # treedata << tree_node
-        thismodel = ARCGenIIIPORIS.new(@project.id)
+        thismodel = @project.csys.toPORISXML
 
 
         ActiveSupport.escape_html_entities_in_json = false
