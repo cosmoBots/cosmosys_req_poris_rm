@@ -16,5 +16,7 @@ Redmine::Plugin.register :cosmosys_req_poris do
 
   menu :project_menu, :csys_poris, {:controller => 'csys_poris', :action => 'menu' }, :caption => 'PORIS', :after => :activity, :param => :id
 
+  require 'PORIS'
+  # TODO: Remove this example
+  require 'ARCGenIIIPORIS'
 end
-  
