@@ -124,12 +124,46 @@ module CosmosysIssuePorisPatch
       return ret
     end
 
+
+    def toPORISDestinations(items_dict)
+      # Then we add the relationships
+      first_iteration = (items_dict.keys.length == 0)
+      items_dict.keys.each{|i|
+        puts('--> '+ i + ' ' + items_dict[i][:elem].getName)
+        issue = items_dict[i][:issue]
+        elem = items_dict[i][:elem]
+        issue.relations_to.each{|r|
+          if r.relation_type == 'blocks' then
+            otherissue = Issue.find(r.issue_from_id)
+            otherelem = items_dict[r.issue_from_id.to_s][:elem]
+            if otherelem.class == PORISMode then
+              if elem.class == PORISMode then
+                puts(otherelem.getName + " is submode of " + elem.getName )
+                elem.addSubMode(otherelem)
+              else
+                elem.addMode(otherelem)
+              end
+            else
+              if otherelem.is_a?(PORISValue) then
+                elem.addValue(otherelem)
+              end
+            end
+          end
+        }
+      }
+    end
+
     def toPORISXMLNode(model, items_dict)
       # First we add the root
+      firstelement = (items_dict.keys.length == 0)
+      if (firstelement) then
+        puts("000000000000000000000000000000")
+      end
+
       thiselement = self.createElement(model)
       if (thiselement != nil) then
         self.addPorisNode(thiselement, model)
-        items_dict[self.id.to_s] = thiselement
+        items_dict[self.id.to_s] = { elem: thiselement, issue:self.issue }
 
         # Then we add the subtree
         self.issue.children.each {|c|
@@ -152,11 +186,12 @@ module CosmosysIssuePorisPatch
             end
           end
         }
-        # Then we add the relationships
-
-
-        # Finally we return the items_dict
       end
+      if (firstelement) then
+        puts("AAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        self.toPORISDestinations(items_dict)
+      end
+      # Finally we return the items_dict
       return items_dict, thiselement
     end
 
@@ -165,7 +200,9 @@ module CosmosysIssuePorisPatch
       rootissue = self.find_sys(self.issue.project)
       items_dict = {}
       items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel,{})
-      puts(items_dict)
+      puts("************************")
+      puts(items_dict.keys.to_s)
+      puts("+++++++++++++++++++++++++")
       thismodel.setRoot(thisroot)
       puts("Number of nodes loaded ", thismodel.id_counter.to_s)
 

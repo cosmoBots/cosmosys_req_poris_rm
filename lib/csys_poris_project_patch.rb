@@ -24,7 +24,11 @@ module CosmosysProjectPatch
       rootissue = self.project.issues.first
       rootissue = rootissue.csys.find_sys(self.project)
       items_dict = {}
+      puts("************ PROJECT ************")
       items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel,{})
+      puts("************ ITEMS_DICT ************")
+      puts(items_dict.keys.to_s)
+      puts("************ THISROOT ************")
       thismodel.setRoot(thisroot)
 
       # Finally we return the document
