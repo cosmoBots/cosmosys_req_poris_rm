@@ -53,6 +53,7 @@ module CosmosysIssuePorisPatch
       elem.setDescription(self.issue.description)
     end
 
+
     def createElement(model)
       ret = nil
       if self.issue.tracker == @@prSystracker then
@@ -67,6 +68,50 @@ module CosmosysIssuePorisPatch
             if self.issue.tracker == @@prValuetracker then
               ret = PORISValue.new(self.issue.subject)
             else
+              if self.issue.tracker == @@prValFloattracker then
+
+                minvalue = nil
+                minvaluecf = self.issue.custom_values.find_by_custom_field_id(@@prMincf.id)
+                if minvaluecf != nil then
+                  minvalueval = minvaluecf.value
+                  if minvalueval != nil then
+                    minvalue = minvalueval
+                  end
+                end
+                maxvalue = nil
+                maxvaluecf = self.issue.custom_values.find_by_custom_field_id(@@prMaxcf.id)
+                if maxvaluecf != nil then
+                  maxvalueval = maxvaluecf.value
+                  if maxvalueval != nil then
+                    maxvalue = maxvalueval
+                  end
+                end
+                defvalue = nil
+                defvaluecf = self.issue.custom_values.find_by_custom_field_id(@@prDefaultcf.id)
+                if defvaluecf != nil then
+                  defvalueval = defvaluecf.value
+                  if defvalueval != nil then
+                    defvalue = defvalueval
+                  end
+                end
+                ret = PORISValueFloat.new(self.issue.subject, minvalue, defvalue, maxvalue)
+              else
+                if self.issue.tracker == @@prValTexttracker then
+                  defvalue = nil
+                  defvaluecf = self.issue.custom_values.find_by_custom_field_id(@@prDefaultTextcf.id)
+                  if defvaluecf != nil then
+                    defvalueval = defvaluecf.value
+                    if defvalueval != nil then
+                      defvalue = defvalueval
+                    end
+                  end
+                    ret = PORISValueString.new(self.issue.subject, defvalue)
+                else
+                  if self.issue.tracker == @@prCmdtracker then
+                    # Skip at this moment
+                  end
+                end
+              end
             end
           end
         end
@@ -101,7 +146,7 @@ module CosmosysIssuePorisPatch
                 if child_elem.is_a?(PORISValue) then
                   thiselement.addValue(child_elem)
                 else
-                  puts("Skipping descendant because of unknown PORIS class")
+                  puts("Skipping descendant " + c.subject + " because of unknown PORIS class " + child_elem.class.name)
                 end
               end
             end
@@ -120,7 +165,9 @@ module CosmosysIssuePorisPatch
       rootissue = self.find_sys(self.issue.project)
       items_dict = {}
       items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel,{})
+      puts(items_dict)
       thismodel.setRoot(thisroot)
+      puts("Number of nodes loaded ", thismodel.id_counter.to_s)
 
       # Finally we return the document
       return thismodel
