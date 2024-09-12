@@ -10,6 +10,7 @@ class CsysPorisController < ApplicationController
       @project = @issue.project
     else
       @project = params[:id] ? Project.find(params[:id]) : Project.first
+      @issue = nil
     end
     #print("Project: "+@project.to_s+"\n")
   end
@@ -157,7 +158,11 @@ end
         puts(@key)
         splitted_url = request.fullpath.split('/csys_poris')
         root_url = splitted_url[0]
-        @formpath = root_url+"/csys_poris/"+@project.identifier+"/form"
+        if (@issue != nil) then
+          @formpath = root_url+"/csys_poris/"+@issue.id.to_s+"/form"
+        else
+          @formpath = root_url+"/csys_poris/"+@project.identifier+"/form"
+        end
       }
 
       format.xml {
@@ -176,12 +181,11 @@ end
         splitted_url = request.fullpath.split('/csys_poris')
         root_url = splitted_url[0]
 
-        # tree_node = create_tree(thisnode,root_url,is_project,@project,u.api_key)
-        # file = File.read('./plugins/cosmosys_req_poris/assets/sample.xml')
-        # tree_node = JSON.parse file
-        # treedata << tree_node
-        thismodel = @project.csys.toPORISXML
-
+        if (@issue != nil) then
+          thismodel = @issue.csys.toPORISXML
+        else
+          thismodel = @project.csys.toPORISXML
+        end
 
         ActiveSupport.escape_html_entities_in_json = false
         render xml: thismodel.toXML.to_s

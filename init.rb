@@ -13,8 +13,6 @@ Redmine::Plugin.register :cosmosys_req_poris do
   permission :csys_poris_menu, :csys_poris => :menu
   permission :csys_poris_form, :csys_poris => :form
   permission :csys_poris_form_commit, :csys_poris => :form_commit
-  permission :csys_poris_issues_form, :csys_poris_issues => :form
-  permission :csys_poris_issues_form_commit, :csys_poris_issues => :form_commit
 
   menu :project_menu, :csys_poris, {:controller => 'csys_poris', :action => 'menu' }, :caption => 'PORIS', :after => :activity, :param => :id
 
@@ -25,6 +23,7 @@ Redmine::Plugin.register :cosmosys_req_poris do
   require 'ARCGenIIIPORIS'
 
   # Patches to the Redmine core.
-  require 'cosmosys_project_patch'
+  require 'csys_poris_project_patch'
+  require 'csys_poris_issue_patch'
 
 end

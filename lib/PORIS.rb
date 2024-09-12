@@ -2,6 +2,7 @@ require 'rexml/document'
 require 'date'
 require 'tzinfo'
 
+debug = false
 ############################### PORIS subtype classes (not PORIS items) #########################################
 
 ############################### PORIS Formatters #########################################
@@ -152,7 +153,7 @@ PORISVALUEFORMATTER_ARCSEC = PORISValueArcSecFormatter.new("arcmin", 9, "arcsec"
 class PORIS
   # Constructor, needs a name for the PORIS item
   def initialize(name)
-    puts "Creating PORIS instance name #{name}"
+    # puts "Creating PORIS instance name #{name}"
     # Public attributes
     @id = nil               # A numeric id for reference
     @ident = nil            # A text id for reference
@@ -299,7 +300,7 @@ class PORIS
 
   # Recovers the id of the item from a reference
   def self.fromXMLRef(n_node, pdoc)
-    puts "destination_node: #{n_node.xpath}"
+    # puts "destination_node: #{n_node.xpath}"
     idnode = n_node.getElementsByTagName('id')[0]
     if idnode.firstChild.nodeType == idnode.TEXT_NODE
       return pdoc.get_item(idnode.firstChild.nodeValue.to_i)
@@ -343,7 +344,6 @@ class PORIS
 
     # subnode with an identifying string
     ident_child = REXML::Element.new('ident')
-    puts "Dump #{getName}"
     value_text = REXML::Text.new(@ident)
     ident_child.push(value_text)
     n_node.push(ident_child)
@@ -587,12 +587,9 @@ class PORISValue < PORIS
   # Dumps the item's XML (uses PORIS superclass' one and appends information of the formatter)
   def toXML(dom)
     # puts(dom)
-    puts("toXML self ", self.getName)
-    puts("-----------")
+    # puts("toXML self ", self.getName)
     # puts("toXML super ", super.getName)
-    puts("-----------")
     n_node = super(dom)
-    puts("+++++++++++")
     n_node.add_element(getXMLFormatter.toXMLRef(dom))
     n_node
   end
@@ -961,9 +958,7 @@ class PORISValueFloat < PORISValueData
 
     defaultfloatnode = REXML::Element.new("default-float")
     defaultfloatnode.add_attribute("type", "float")
-    puts("This is a float!!!!", getDefaultData)
     valueText = REXML::Text.new(getDefaultData.to_s)
-    puts("This is a float!!!!", valueText)
     defaultfloatnode.push(valueText)
     n_node.add_element(defaultfloatnode)
 
@@ -1232,25 +1227,25 @@ class PORISMode < PORIS
     ret.default_value = nil
 
     dest_node = n_node.get_elements_by_tag_name("destinations")[0]
-    puts "destnode: #{dest_node.local_name}"
+    # puts "destnode: #{dest_node.local_name}"
     dest = nil
-    puts ret.getName
+    # puts ret.getName
     dest_node.child_nodes.each do |d|
       if d.local_name == "destination"
-        puts "d.localname: #{d.local_name}"
+        # puts "d.localname: #{d.local_name}"
         dest = PORIS.fromXMLRef(d, pdoc)
-        puts "d: #{dest.getName}"
+        # puts "d: #{dest.getName}"
         if dest
           if dest.is_a?(PORISValue)
             # Let's see the destinations to know if it is a PORISSys or a PORISParam
             ret.addValue(dest)
-            puts ret.values
+            # puts ret.values
           end
 
           if dest.is_a?(PORISMode)
             # Let's see the destinations to know if it is a PORISSys or a PORISParam
             ret.add_sub_mode(dest)
-            puts ret.submodes
+            # puts ret.submodes
           end
         end
       end
@@ -1300,7 +1295,7 @@ class PORISNode < PORIS
 
   # Setter for the default mode
   def setDefaultMode(m)
-    puts "Setting #{m.getName} as the default mode for #{getName}"
+    # puts "Setting #{m.getName} as the default mode for #{getName}"
     if @modes.key?(m.getId)
       @defaultMode = m
     else
@@ -1319,7 +1314,7 @@ class PORISNode < PORIS
     # First we will get an eligible mode given our candidate
     ret = getEligibleMode(m)
     if ret.nil?
-      if $debug
+      if debug
         puts "New eligible mode is NULL, so we have to set initialize the item to select the unknown mode"
       end
       ret = init
@@ -1327,7 +1322,7 @@ class PORISNode < PORIS
 
     # If the mode has changed from the previous one, we shall propagate the change
     if ret != getSelectedMode
-      if $debug
+      if debug
         puts "New mode is #{ret.getName}"
         if getSelectedMode
           puts " which is different from #{getSelectedMode.getName}"
@@ -1369,14 +1364,14 @@ class PORISNode < PORIS
   # This function is normally only called internally, in reaction to
   # the circumstances of not having a selected mode when it is expected to have
   def init
-    if $debug
+    if debug
       puts "----> Init #{getName}, mode list len: #{@modes.length}"
     end
 
     # We select the first mode of the list, and set it as the selected one
     firstMode = @modes[@modes.keys[0]]
     @selectedMode = firstMode
-    if $debug
+    if debug
       puts "Init #{getName}: #{firstMode.getName}"
     end
     @selectedMode
@@ -1385,7 +1380,7 @@ class PORISNode < PORIS
   # This function gets the selected mode of a PORISNode.  In case there is no selected mode
   # it forces the selection of the first one (UNKNOWN)
   def getNotNullSelectedMode
-    if $debug
+    if debug
       puts "Entering in PORISNode getNotNullSelectedMode #{getName}"
     end
 
@@ -1394,7 +1389,7 @@ class PORISNode < PORIS
       # There is no selected mode?  Then we will force the item initialization
       # This normally is not occurring, because from the first mode added, the item
       # has a selected one
-      if $debug
+      if debug
         puts "- selectedMode is NULL"
       end
 
@@ -1403,7 +1398,7 @@ class PORISNode < PORIS
       ret = init
     end
 
-    if $debug
+    if debug
       puts "- selectedMode is now #{getSelectedMode.getName}"
     end
     # This looks like redundant, but it is not!!!
@@ -1426,7 +1421,7 @@ class PORISNode < PORIS
   # allows disabling parts of a PORIS subtree depending on the choices made at higher levels
   # TODO: Implement a check to confirm m and current are siblings
   def getEligibleMode(m)
-    if $debug
+    if debug
       puts "Entering in PORISNode #{getName}.getEligibleMode(#{m.getName})"
     end
 
@@ -1435,14 +1430,14 @@ class PORISNode < PORIS
       # m is a mode of the current item
       if getParent.nil?
         # Current item has no parent, no restrictions to set m
-        if $debug
+        if debug
           puts "Parent of #{getName} is null, no upper levels for restrictions, we can freely select m"
         end
         ret = m
       else
         # As this mode has a parent, we need to select a mode which is eligible in the context of the active mode at higher level
         # presenting the candidate as the candidate one, and the current mode as the alternative candidate
-        if $debug
+        if debug
           puts "Searching within the #{getParent.getSelectedMode.submodes.length} submodes of #{getParent.getName}"
           puts "selectedMode #{getSelectedMode.getName} #{m.getName}"
         end
@@ -1450,11 +1445,11 @@ class PORISNode < PORIS
       end
 
       if ret.nil?
-        if $debug
+        if debug
           puts "ERROR, we were not lucky, there was no way of selecting a mode (NULL after search)"
         end
       else
-        if $debug
+        if debug
           puts "Selected mode is #{ret.getName}"
         end
       end
@@ -1570,19 +1565,19 @@ class PORISNode < PORIS
     # Let's see the destinations to know if it is a PORISSys or a PORISParam
     namenode = n_node.getElementsByTagName("name")[0]
     name = namenode.firstChild.nodeValue
-    puts "****** Parsing #{t} #{name}"
+    # puts "****** Parsing #{t} #{name}"
 
     destnode = n_node.getElementsByTagName("destinations")[0]
     destnode.children.each do |d|
       if d.nodeType != d.TEXT_NODE
-        puts "Name #{d.xpath}"
+        # puts "Name #{d.xpath}"
         if d.getAttribute("type") == "PORISNode" || d.getAttribute("type") == "PORISSys" || d.getAttribute("type") == "PORISParam"
-          puts "Is a system"
+          # puts "Is a system"
           return PORISSys.fromXML(n_node, pdoc)
         end
       end
     end
-    puts "Is a param"
+    # puts "Is a param"
     PORISParam.fromXML(n_node, pdoc)
   end
 
@@ -1594,18 +1589,18 @@ class PORISNode < PORIS
     ret.defaultMode = nil
 
     destnode = n_node.getElementsByTagName("destinations")[0]
-    puts "destnode: #{destnode.xpath}"
+    # puts "destnode: #{destnode.xpath}"
     dest = nil
-    puts ret.getName
+    # puts ret.getName
     destnode.children.each do |d|
       if d.nodeType != d.TEXT_NODE
         dest = PORIS.fromXMLRef(d, pdoc)
-        puts "d: #{dest.getName}"
+        # puts "d: #{dest.getName}"
         if dest
           if dest.is_a?(PORISMode)
             # Let's see the destinations to know if it is a PORISSys or a PORISParam
             ret.addMode(dest)
-            puts ret.modes
+            # puts ret.modes
           end
         end
       end
@@ -1640,12 +1635,12 @@ class PORISParam < PORISNode
   end
 
   def setEligibleValue
-    puts "Entering PORISParam setEligibleValue #{name}" if $debug
+    # puts "Entering PORISParam setEligibleValue #{name}" if debug
     setValue(@selected_value)
   end
 
   def selectMode(m)
-    puts "Entering PORISParam #{name}.selectMode(#{m.name})" if $debug
+    # puts "Entering PORISParam #{name}.selectMode(#{m.name})" if debug
 
     prev_mode = getSelectedMode
     ret = super(m)
@@ -1666,7 +1661,7 @@ class PORISParam < PORISNode
   end
 
   def getEligibleValue(v, current)
-    if $debug
+    if debug
       if v.nil?
         puts "Entering PORISParam getEligibleValue #{name} with NULL value"
       else
@@ -1676,7 +1671,7 @@ class PORISParam < PORISNode
     end
 
     if getSelectedMode.nil?
-      puts "- selected_mode is NULL" if $debug
+      # puts "- selected_mode is NULL" if debug
       init
     end
 
@@ -1684,7 +1679,7 @@ class PORISParam < PORISNode
   end
 
   def setValue(v)
-    if $debug
+    if debug
       if v.nil?
         puts "Entering PORISParam setValue #{name} with NULL value"
       else
@@ -1797,7 +1792,7 @@ class PORISSys < PORISNode
   end
 
   def selectMode(m)
-    if $debug
+    if debug
       puts "Entering in Sys selectMode for #{getName} with candidate mode #{m.getName}"
     end
 
@@ -1814,7 +1809,7 @@ class PORISSys < PORISNode
       end
     end
 
-    if $debug
+    if debug
       if m == ret
         puts "Candidate mode successfully applied: #{ret.getName}"
       else
@@ -1962,7 +1957,7 @@ class PORISDoc
   end
 
   def addItem(n, id = nil)
-    puts(n.getName)
+    # puts(n.getName)
     if id.nil?
       n.setId(@id_counter)
       @id_counter += 1
