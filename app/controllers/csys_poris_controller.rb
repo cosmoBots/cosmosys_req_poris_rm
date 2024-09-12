@@ -159,9 +159,9 @@ end
         splitted_url = request.fullpath.split('/csys_poris')
         root_url = splitted_url[0]
         if (@issue != nil) then
-          @formpath = root_url+"/csys_poris/"+@issue.id.to_s+"/form"
+          @formpath = root_url+"/csys_poris/"+@project.identifier+"/form.xml?issue_id="+@issue.id.to_s+"&key="+@key
         else
-          @formpath = root_url+"/csys_poris/"+@project.identifier+"/form"
+          @formpath = root_url+"/csys_poris/"+@project.identifier+"/form.xml?key="+@key
         end
       }
 
