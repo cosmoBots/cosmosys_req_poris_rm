@@ -19,18 +19,23 @@ module CosmosysProjectPatch
 
   module InstanceMethods
 
-    def toPORISXML
+    def toPORISXML(across_projects)
       thismodel = PORISDoc.new(self.project.id)
       rootissue = self.project.issues.first
-      rootissue = rootissue.csys.find_sys(self.project)
-      items_dict = {}
-      puts("************ PROJECT ************")
-      items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel,{})
-      puts("************ ITEMS_DICT ************")
-      puts(items_dict.keys.to_s)
-      puts("************ THISROOT ************")
-      thismodel.setRoot(thisroot)
-
+      # Maybe there is no item in the project, so we can not continue
+      if (rootissue != nil) then
+        rootissue = rootissue.csys.find_node(self.project, false)
+        # Maybe there is no item in the project, so we can not continue
+        if (rootissue != nil) then
+            items_dict = {}
+            puts("************ PROJECT ************")
+            items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel, {}, rootissue, across_projects)
+            puts("************ ITEMS_DICT ************")
+            puts(items_dict.keys.to_s)
+            puts("************ THISROOT ************")
+            thismodel.setRoot(thisroot)
+        end
+      end
       # Finally we return the document
       return thismodel
     end

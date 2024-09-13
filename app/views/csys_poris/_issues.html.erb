@@ -1,5 +1,7 @@
 <% if @issue != nil then %>
-<p><%= link_to 'Form', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :across => "y", :key => User.current.api_key}, :method => :get %></p>
 <% else %>
-<p><%= link_to 'Form', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => nil, :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => nil, :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => nil, :across => "y", :key => User.current.api_key}, :method => :get %></p>
 <% end %>

@@ -156,6 +156,12 @@ end
         puts("key")
         @key = User.current.api_key
         puts(@key)
+        across = false
+        if params[:across] != nil then
+          if params[:across] == "y" then
+            across = true
+          end
+        end
         splitted_url = request.fullpath.split('/csys_poris')
         root_url = splitted_url[0]
         if (@issue != nil) then
@@ -163,11 +169,22 @@ end
         else
           @formpath = root_url+"/csys_poris/"+@project.identifier+"/form.xml?key="+@key
         end
+        if across then
+          @formpath += "&across=y"
+        end
       }
 
       format.xml {
         treedata = []
+
         is_project = @issue ? false : true
+
+        across = false
+        if params[:across] != nil then
+          if params[:across] == "y" then
+            across = true
+          end
+        end
 
         if (@issue) then
           thisnodeid = params[:issue_id]
@@ -182,9 +199,9 @@ end
         root_url = splitted_url[0]
 
         if (@issue != nil) then
-          thismodel = @issue.csys.toPORISXML
+          thismodel = @issue.csys.toPORISXML(across)
         else
-          thismodel = @project.csys.toPORISXML
+          thismodel = @project.csys.toPORISXML(across)
         end
 
         ActiveSupport.escape_html_entities_in_json = false

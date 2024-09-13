@@ -31,17 +31,17 @@ module CosmosysIssuePorisPatch
     @@prMaxcf = IssueCustomField.find_by_name('prMax')
     @@prDefaultTextcf = IssueCustomField.find_by_name('prDefaultText')
 
-    def find_sys(refproject)
+    def find_node(refproject, across_projects)
       if self.issue.parent == nil then
         return self.issue
       else
-        if self.issue.project != refproject then
+        if across_projects && (self.issue.project != refproject) then
           return self.issue
         else
-          if self.issue.tracker == @@prSystracker then
+          if self.issue.tracker == @@prSystracker || self.issue.tracker == @@prParamtracker then
             return self.issue
           else
-            return self.issue.parent.csys.find_sys(refproject)
+            return self.issue.parent.csys.find_node(refproject, across_projects)
           end
         end
       end
@@ -135,17 +135,22 @@ module CosmosysIssuePorisPatch
         issue.relations_to.each{|r|
           if r.relation_type == 'blocks' then
             otherissue = Issue.find(r.issue_from_id)
-            otherelem = items_dict[r.issue_from_id.to_s][:elem]
-            if otherelem.class == PORISMode then
-              if elem.class == PORISMode then
-                puts(otherelem.getName + " is submode of " + elem.getName )
-                elem.addSubMode(otherelem)
+            # In the case the other side of the relationship is in another project
+            # then we can have errors when accessing the items_dict
+            otherdict = items_dict[r.issue_from_id.to_s]
+            if (otherdict != nil) then
+              otherelem = otherdict[:elem]
+              if otherelem.class == PORISMode then
+                if elem.class == PORISMode then
+                  puts(otherelem.getName + " is submode of " + elem.getName )
+                  elem.addSubMode(otherelem)
+                else
+                  elem.addMode(otherelem)
+                end
               else
-                elem.addMode(otherelem)
-              end
-            else
-              if otherelem.is_a?(PORISValue) then
-                elem.addValue(otherelem)
+                if otherelem.is_a?(PORISValue) then
+                  elem.addValue(otherelem)
+                end
               end
             end
           end
@@ -153,7 +158,7 @@ module CosmosysIssuePorisPatch
       }
     end
 
-    def toPORISXMLNode(model, items_dict)
+    def toPORISXMLNode(model, items_dict, root_issue, across_projects)
       # First we add the root
       firstelement = (items_dict.keys.length == 0)
       if (firstelement) then
@@ -167,20 +172,27 @@ module CosmosysIssuePorisPatch
 
         # Then we add the subtree
         self.issue.children.each {|c|
-          items_dict, child_elem = c.csys.toPORISXMLNode(model,items_dict)
-          if child_elem.class == PORISMode then
-            thiselement.addMode(child_elem)
-          else
-            if child_elem.class == PORISSys then
-              thiselement.addSubsystem(child_elem)
+          # Explore childrens only inside current project, unless across_projects flag is set
+          puts("root: " + root_issue.project.identifier + " " + root_issue.subject)
+          puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
+          puts("c: " + c.project.identifier + " " + c.subject)
+          if across_projects || (self.issue.project == root_issue.project) || (c.tracker == @@prModetracker && (self.issue.parent.project == root_issue.project)) then
+            puts("Ey!")
+            items_dict, child_elem = c.csys.toPORISXMLNode(model, items_dict, root_issue, across_projects)
+            if child_elem.class == PORISMode then
+              thiselement.addMode(child_elem)
             else
-              if child_elem.class == PORISParam then
-                thiselement.addParam(child_elem)
+              if child_elem.class == PORISSys then
+                thiselement.addSubsystem(child_elem)
               else
-                if child_elem.is_a?(PORISValue) then
-                  thiselement.addValue(child_elem)
+                if child_elem.class == PORISParam then
+                  thiselement.addParam(child_elem)
                 else
-                  puts("Skipping descendant " + c.subject + " because of unknown PORIS class " + child_elem.class.name)
+                  if child_elem.is_a?(PORISValue) then
+                    thiselement.addValue(child_elem)
+                  else
+                    puts("Skipping descendant " + c.subject + " because of unknown PORIS class " + child_elem.class.name)
+                  end
                 end
               end
             end
@@ -195,11 +207,11 @@ module CosmosysIssuePorisPatch
       return items_dict, thiselement
     end
 
-    def toPORISXML
+    def toPORISXML(across_projects)
       thismodel = PORISDoc.new(self.issue.id)
-      rootissue = self.find_sys(self.issue.project)
+      rootissue = self.find_node(self.issue.project, across_projects)
       items_dict = {}
-      items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel,{})
+      items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel, {}, rootissue, across_projects)
       puts("************************")
       puts(items_dict.keys.to_s)
       puts("+++++++++++++++++++++++++")
