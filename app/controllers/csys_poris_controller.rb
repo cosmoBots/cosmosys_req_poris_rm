@@ -156,10 +156,22 @@ end
         puts("key")
         @key = User.current.api_key
         puts(@key)
-        across = false
-        if params[:across] != nil then
-          if params[:across] == "y" then
-            across = true
+        across_sub = false
+        if params[:across_sub] != nil then
+          if params[:across_sub] == "y" then
+            across_sub = true
+          end
+        end
+        across_sup= false
+        if params[:across_sup] != nil then
+          if params[:across_sup] == "y" then
+            across_sup = true
+          end
+        end
+        from_root= false
+        if params[:from_root] != nil then
+          if params[:from_root] == "y" then
+            from_root = true
           end
         end
         splitted_url = request.fullpath.split('/csys_poris')
@@ -169,8 +181,14 @@ end
         else
           @formpath = root_url+"/csys_poris/"+@project.identifier+"/form.xml?key="+@key
         end
-        if across then
-          @formpath += "&across=y"
+        if across_sub then
+          @formpath += "&across_sub=y"
+        end
+        if across_sup then
+          @formpath += "&across_sup=y"
+        end
+        if from_root then
+          @formpath += "&from_root=y"
         end
       }
 
@@ -179,10 +197,22 @@ end
 
         is_project = @issue ? false : true
 
-        across = false
-        if params[:across] != nil then
-          if params[:across] == "y" then
-            across = true
+        across_sub = false
+        if params[:across_sub] != nil then
+          if params[:across_sub] == "y" then
+            across_sub = true
+          end
+        end
+        across_sup= false
+        if params[:across_sup] != nil then
+          if params[:across_sup] == "y" then
+            across_sup = true
+          end
+        end
+        from_root= false
+        if params[:from_root] != nil then
+          if params[:from_root] == "y" then
+            from_root = true
           end
         end
 
@@ -199,9 +229,9 @@ end
         root_url = splitted_url[0]
 
         if (@issue != nil) then
-          thismodel = @issue.csys.toPORISXML(across)
+          thismodel = @issue.csys.toPORISXML(from_root, across_sup, across_sub)
         else
-          thismodel = @project.csys.toPORISXML(across)
+          thismodel = @project.csys.toPORISXML(across_sup, across_sub)
         end
 
         ActiveSupport.escape_html_entities_in_json = false

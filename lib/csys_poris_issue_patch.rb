@@ -31,20 +31,33 @@ module CosmosysIssuePorisPatch
     @@prMaxcf = IssueCustomField.find_by_name('prMax')
     @@prDefaultTextcf = IssueCustomField.find_by_name('prDefaultText')
 
-    def find_node(refproject, across_projects)
+    def find_node(refproject)
       if self.issue.parent == nil then
         return self.issue
       else
-        if across_projects && (self.issue.project != refproject) then
+        if self.issue.tracker == @@prSystracker || self.issue.tracker == @@prParamtracker then
           return self.issue
         else
-          if self.issue.tracker == @@prSystracker || self.issue.tracker == @@prParamtracker then
-            return self.issue
-          else
-            return self.issue.parent.csys.find_node(refproject, across_projects)
-          end
+          return self.issue.parent.csys.find_node(refproject)
         end
       end
+    end
+
+    def find_root(refproject, across_super_projects)
+      puts("Entering to find_root with node " + self.issue.subject)
+      ret = nil
+      if self.issue.parent == nil then
+        ret = self.issue
+      else
+        if !across_super_projects && (self.issue.parent.project != refproject) then
+          puts("returning: " + refproject.identifier + " != " + self.issue.project.identifier)
+          ret = self.issue
+        else
+          ret =  self.issue.parent.csys.find_root(refproject, across_super_projects)
+        end
+      end
+      puts("returning: " + ret.subject)
+      return ret
     end
 
     def addPorisNode(elem, model)
@@ -158,7 +171,7 @@ module CosmosysIssuePorisPatch
       }
     end
 
-    def toPORISXMLNode(model, items_dict, root_issue, across_projects)
+    def toPORISXMLNode(model, items_dict, root_issue, across_sub_projects)
       # First we add the root
       firstelement = (items_dict.keys.length == 0)
       if (firstelement) then
@@ -170,15 +183,17 @@ module CosmosysIssuePorisPatch
         self.addPorisNode(thiselement, model)
         items_dict[self.id.to_s] = { elem: thiselement, issue:self.issue }
 
+        puts("root: " + root_issue.project.identifier + " " + root_issue.subject)
+        puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
         # Then we add the subtree
         self.issue.children.each {|c|
-          # Explore childrens only inside current project, unless across_projects flag is set
+          # Explore childrens only inside current project, unless across_sub_projects flag is set
           puts("root: " + root_issue.project.identifier + " " + root_issue.subject)
           puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
           puts("c: " + c.project.identifier + " " + c.subject)
-          if across_projects || (self.issue.project == root_issue.project) || (c.tracker == @@prModetracker && (self.issue.parent.project == root_issue.project)) then
+          if across_sub_projects || (self.issue.parent.project != root_issue.project) || (c.tracker == @@prModetracker && (self.issue.parent.project == root_issue.project)) then
             puts("Ey!")
-            items_dict, child_elem = c.csys.toPORISXMLNode(model, items_dict, root_issue, across_projects)
+            items_dict, child_elem = c.csys.toPORISXMLNode(model, items_dict, root_issue, across_sub_projects)
             if child_elem.class == PORISMode then
               thiselement.addMode(child_elem)
             else
@@ -207,11 +222,19 @@ module CosmosysIssuePorisPatch
       return items_dict, thiselement
     end
 
-    def toPORISXML(across_projects)
+    def toPORISXML(from_root, across_super_projects, across_sub_projects)
       thismodel = PORISDoc.new(self.issue.id)
-      rootissue = self.find_node(self.issue.project, across_projects)
+      puts("from_root is " + from_root.to_s)
+      if not from_root then
+        rootissue = self.find_node(self.issue.project)
+      else
+        rootissue = self.find_root(self.issue.project, across_super_projects)
+      end
+      puts("across_super_projects is " + across_super_projects.to_s)
+      puts("rootissue is " + rootissue.subject)
       items_dict = {}
-      items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel, {}, rootissue, across_projects)
+      puts("across_sub_projects is " + across_sub_projects.to_s)
+      items_dict,thisroot = rootissue.csys.toPORISXMLNode(thismodel, {}, rootissue, across_sub_projects)
       puts("************************")
       puts(items_dict.keys.to_s)
       puts("+++++++++++++++++++++++++")
