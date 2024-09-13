@@ -191,7 +191,10 @@ module CosmosysIssuePorisPatch
           puts("root: " + root_issue.project.identifier + " " + root_issue.subject)
           puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
           puts("c: " + c.project.identifier + " " + c.subject)
-          if across_sub_projects || (self.issue.parent.project != root_issue.project) || (c.tracker == @@prModetracker && (self.issue.parent.project == root_issue.project)) then
+          if across_sub_projects || 
+            self.issue.parent == nil || 
+            !(self.issue.parent.project != root_issue.project) || 
+            (c.tracker == @@prModetracker && (self.issue.parent.project == root_issue.project)) then
             puts("Ey!")
             items_dict, child_elem = c.csys.toPORISXMLNode(model, items_dict, root_issue, across_sub_projects)
             if child_elem.class == PORISMode then

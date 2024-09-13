@@ -4,6 +4,20 @@
     <%= stylesheet_link_tag 'form/ModelXMLView-58gPgZp8', :plugin => 'cosmosys_req_poris' %>
 <% end %>
 
+<% if @issue != nil then %>
+<p><%= link_to 'XML Panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel from project root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel from top root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<% else %>
+<p><%= link_to 'XML Panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel from top root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<% end %>
+
 <div id="app"></div>
 
 <script>thiskey="<%=@key%>"</script>
