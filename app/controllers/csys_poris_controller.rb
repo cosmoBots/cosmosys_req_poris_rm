@@ -15,9 +15,6 @@ class CsysPorisController < ApplicationController
     #print("Project: "+@project.to_s+"\n")
   end
 
-  def menu
-  end
-
 # BEGIN ******************** Port this to PORIS JSON
 
 private def create_project_tree(current_issue, root_url, thisproject, thiskey)
