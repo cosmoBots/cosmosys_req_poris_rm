@@ -1,8 +1,44 @@
-<% if @issue != nil then %>
-<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from project root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
-<% end %>
+
+<div class="poris-content">
+  <div class="poristabsContainer">
+    <button class="poristablink" onclick="openPorisTab('Panel', this, 'steelblue')" id="defaultOpenPorisTab">Panel</button>
+    <button class="poristablink" onclick="openPorisTab('OtherPanels', this, 'steelblue')">OtherPanels</button>
+  </div>
+  <div id="Panel" class="poristabcontent">
+
+    <% 
+        splitted_url = request.fullpath.split('/cosmosys')
+        root_url = request.base_url+splitted_url[0]
+    
+    content_for :header_tags do %>
+        <%= stylesheet_link_tag 'cosmosys_req_poris', :plugin => 'cosmosys_req_poris' %>
+        <%= stylesheet_link_tag 'form/index-CdC6rP7w', :plugin => 'cosmosys_req_poris' %>
+        <%= stylesheet_link_tag 'form/ModelXMLView-58gPgZp8', :plugin => 'cosmosys_req_poris' %>
+    <% end %>
+
+    <div id="app"></div>
+
+
+    <!--div id="tagIzq"></div>
+    <div id="tagDer"></div-->
+
+    <!-- script>porisViewer("<%=@formpath%>","#tagIzq")</script>-->
+    <!-- script>porisViewer("<%=@formpath%>","#tagDer")</script>-->
+
+    <script>formpath="<% @project.csys.calculate_form_path(root_url, @issue.csys, false, false, false, User.current.api_key) %>"</script>
+    <%= javascript_include_tag 'form/index-BnfwZUA4', :plugin => 'cosmosys_req_poris', :type => 'module' %>
+  </div>
+
+<div id="OtherPanels" class="poristabcontent">
+hola
+  <% if @issue != nil then %>
+  <p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, :method => :get %></p>
+  <p><%= link_to 'Show Panel from project root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :key => User.current.api_key}, :method => :get %></p>
+  <p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+  <p><%= link_to 'Show Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+  <p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, :method => :get %></p>
+  <p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+  <% end %>
+  </div>
+</div>
+<%= javascript_include_tag 'csys_poris', :plugin => 'cosmosys_req_poris' %>
