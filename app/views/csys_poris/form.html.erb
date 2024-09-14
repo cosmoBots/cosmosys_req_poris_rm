@@ -1,7 +1,6 @@
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'cosmosys_req_poris', :plugin => 'cosmosys_req_poris' %>
-    <%= stylesheet_link_tag 'form/index-CdC6rP7w', :plugin => 'cosmosys_req_poris' %>
-    <%= stylesheet_link_tag 'form/ModelXMLView-58gPgZp8', :plugin => 'cosmosys_req_poris' %>
+    <%= stylesheet_link_tag 'form/style', :plugin => 'cosmosys_req_poris' %>
 <% end %>
 
 <% if @issue != nil then %>
@@ -18,8 +17,10 @@
 <p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
 <% end %>
 
-<div id="app"></div>
+<div id="porisViewer"/>
 
-<script>thiskey="<%=@key%>"</script>
-<script>formpath="<%=@formpath%>"</script>
-<%= javascript_include_tag 'form/index-BnfwZUA4', :plugin => 'cosmosys_req_poris', :type => 'module' %>
+<script type="module">
+    import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/form/prod' %>'
+    createPorisViewerPanel('<%=@formpath%>', '#porisViewer')
+
+</script>
