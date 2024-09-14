@@ -1,8 +1,8 @@
 <% if @issue != nil then %>
-<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from project root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id}, :method => :get %></p>
+<p><%= link_to 'Show Panel from project root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y"}, :method => :get %></p>
+<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y"}, :method => :get %></p>
+<p><%= link_to 'Show Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y"}, :method => :get %></p>
+<p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y"}, :method => :get %></p>
+<p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y"}, :method => :get %></p>
 <% end %>

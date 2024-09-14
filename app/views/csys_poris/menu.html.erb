@@ -1,6 +1,6 @@
 <h2>CosmosysController#menu</h2>
 <p>Actions:</p>
-<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, :method => :get %></p>
-<p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, :method => :get %></p>
+<p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier}, :method => :get %></p>
+<p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :across_sub => "y"}, :method => :get %></p>
+<p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :from_root => "y", :across_sup => "y"}, :method => :get %></p>
+<p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y"}, :method => :get %></p>
