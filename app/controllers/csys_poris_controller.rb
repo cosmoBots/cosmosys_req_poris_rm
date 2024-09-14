@@ -238,6 +238,10 @@ end
     end
   end
 
+  def menu
+    form
+  end
+
   def form_commit
     # Get the user, either from the key or from the current user
     u = (params[:key] != nil) ? User.find_by_api_key(params[:key]) : User.current
