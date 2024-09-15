@@ -27,10 +27,8 @@ then
   <div class="poristabsContainer">
     <button class="loadporislink" onclick="LoadPORISViewer('<%= url1 %>')">Node</button>
     <button class="loadporislink" onclick="LoadPORISViewer('<%= url2 %>')">Project</button>
-    <button class="loadporislink" onclick="LoadPORISViewer('<%= url3 %>')">Node&Down</button>  </div>
-    <p><%= link_to 'XML for Node', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, {download: "n_"+@project.identifier+".xml" } %></p>
-    <p><%= link_to 'XML for Project', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key, :from_root => "y"}, {download: "pr_"+@project.identifier+".xml" } %></p>
-    <p><%= link_to 'XML for Node&Down', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key, :across_sub => "y"}, {download: "d_"+@project.identifier+".xml" } %></p>
+    <button class="loadporislink" onclick="LoadPORISViewer('<%= url3 %>')">Node&Down</button>  
+  </div>
   <div id="Panel" class="poristabcontent">
 
     <%     
@@ -39,18 +37,31 @@ then
         <%= stylesheet_link_tag 'form/style', :plugin => 'cosmosys_req_poris' %>
     <% end %>
 
-<div id="porisViewer"></div>
-<script type="module">
-    import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/form/prod' %>'
+    <div id="porisViewer"></div>
+    <script type="module">
+        import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/form/prod' %>'
 
 
-    window.LoadPORISViewer = function(url) {
-      createPorisViewerPanel(url, '#porisViewer')
-    }
+        window.LoadPORISViewer = function(url) {
+          createPorisViewerPanel(url, '#porisViewer')
+        }
 
-    LoadPORISViewer('<%= url1 %>')
-</script>
-
+        LoadPORISViewer('<%= url1 %>')
+    </script>
   </div>
+<div class="porisXMLlinks"">
+    <button class="loadporislink" onclick="downloadURI('<%= url1%>','<%= @issue.subject%>.xml')">XML for Node</button><br/>
+    <button class="loadporislink" onclick="downloadURI('<%= url2 %>','<%= @project.identifier%>.xml')">XML for Project</button><br/>
+    <button class="loadporislink" onclick="downloadURI('<%= url3 %>','<%= @issue.subject%>_d.xml')">XML for Node&Down</button>
 </div>
+</div>
+<script>
+function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name; // <- name instead of 'name'
+  link.href = uri;
+  link.click();
+  link.remove();
+}
+</script>
 <% end %>

@@ -6,9 +6,9 @@ url2 = @project.csys.calculate_form_path(root_url, nil, true, false, true, User.
 url3 = @project.csys.calculate_form_path(root_url, nil, false, true, true, User.current.api_key).html_safe
 %>
 <div class="porisXMLlinks" style="float: right;">
-   <p><%= link_to 'XML Project panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
-    <p><%= link_to 'XML Project Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
-    <p><%= link_to 'XML Top Node Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+    <button class="loadporislink" onclick="downloadURI('<%= url1%>','<%= @project.identifier%>.xml')">XML for Project</button><br/>
+    <button class="loadporislink" onclick="downloadURI('<%= url2 %>','<%= @project.identifier%>_d.xml')">XML for Project&Down</button><br/>
+    <button class="loadporislink" onclick="downloadURI('<%= url3 %>','<%= @project.identifier%>_td.xml')">XML for TopNode&Down</button>
 </div>
 
 <div class="poris-content">
@@ -33,6 +33,16 @@ url3 = @project.csys.calculate_form_path(root_url, nil, false, true, true, User.
             }
 
             LoadPORISViewer('<%= url1 %>')
+        </script>
+
+        <script>
+function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name; // <- name instead of 'name'
+  link.href = uri;
+  link.click();
+  link.remove();
+}
         </script>
     </div>
 </div>
