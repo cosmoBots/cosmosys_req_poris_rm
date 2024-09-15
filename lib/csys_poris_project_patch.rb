@@ -41,26 +41,6 @@ module CosmosysProjectPatch
       # Finally we return the document
       return thismodel
     end
-
-    def calculate_form_path(root_url, i, from_root, across_sup, across_sub, key)
-      formpath = ""
-      if (i != nil) then
-        formpath = root_url+"/csys_poris/" + self.project.identifier + "/porispanel.xml?issue_id="+i.id.to_s+"&key="+key
-      else
-        formpath = root_url+"/csys_poris/" + self.project.identifier + "/porispanel.xml?key="+key
-      end
-      if across_sub then
-        formpath += "&across_sub=y"
-      end
-      if across_sup then
-        formpath += "&across_sup=y"
-      end
-      if from_root then
-        formpath += "&from_root=y"
-      end
-      return formpath      
-    end
-
   end
 end
 # Add module to Issue

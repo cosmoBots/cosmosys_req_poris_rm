@@ -12,14 +12,9 @@
 )
 
 then 
-    
-        splitted_url = request.fullpath.split('/issues')
-        root_url = request.base_url+splitted_url[0]
-
-
-        url1 = @issue.project.csys.calculate_form_path(root_url, @issue, false, false, false, User.current.api_key).html_safe
-        url2 = @issue.project.csys.calculate_form_path(root_url, @issue, true, false, false, User.current.api_key).html_safe
-        url3 = @issue.project.csys.calculate_form_path(root_url, @issue, false, false, true, User.current.api_key).html_safe
+        url1 = url_for(:controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id)
+        url2 = url_for(:controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id, :from_root => 'y', :key => User.current.api_key)
+        url3 = url_for(:controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id, :across_subs => 'y', :key => User.current.api_key)
 
 %>
 
@@ -50,13 +45,12 @@ then
     </script>
   </div>
 <div class="porisXMLlinks"">
-    <%= link_to 'XML', { :controller => 'csys_poris', :action => 'porispanel', :format => 'xml', :issue_id => @issue.id}, :method => :get %></p>
-    <button class="loadporislink" onclick="downloadURI('<%= url1%>','<%= @issue.subject%>.xml')">XML for Node</button><br/>
-    <button class="loadporislink" onclick="downloadURI('<%= url2 %>','<%= @project.identifier%>.xml')">XML for Project</button><br/>
-    <button class="loadporislink" onclick="downloadURI('<%= url3 %>','<%= @issue.subject%>_d.xml')">XML for Node&Down</button>
+    <%= link_to 'XML', { :controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id}, download: @issue.subject+".poris" %></p>
+    <%= link_to 'XML for Project', { :controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id, :from_root => 'y'}, download: @issue.subject+"_r.poris" %></p>
+    <%= link_to 'XML for Node&Down', { :controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id, :across_subs => 'y'}, download: @issue.subject+"_d.poris" %></p>
 </div>
 </div>
-<script>
+<!--script>
 function downloadURI(uri, name) {
   var link = document.createElement("a");
   link.download = name; // <- name instead of 'name'
@@ -64,5 +58,5 @@ function downloadURI(uri, name) {
   link.click();
   link.remove();
 }
-</script>
+</script-->
 <% end %>
