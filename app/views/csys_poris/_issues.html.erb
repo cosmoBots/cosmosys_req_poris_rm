@@ -28,6 +28,9 @@ then
     <button class="poristablink" onclick="changeRightPanel('<%= url1 %>')">Node</button>
     <button class="poristablink" onclick="changeRightPanel('<%= url2 %>')">Project</button>
     <button class="poristablink" onclick="changeRightPanel('<%= url3 %>')">Node&Down</button>  </div>
+    <p><%= link_to 'XML for Node', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, {download: "n_"+@project.identifier+".xml" } %></p>
+    <p><%= link_to 'XML for Project', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key, :from_root => "y"}, {download: "pr_"+@project.identifier+".xml" } %></p>
+    <p><%= link_to 'XML for Node&Down', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key, :across_sub => "y"}, {download: "d_"+@project.identifier+".xml" } %></p>
   <div id="Panel" class="poristabcontent">
 
     <%     
@@ -48,18 +51,6 @@ then
     changeRightPanel('<%= url1 %>')
 </script>
 
-  </div>
-
-<div id="OtherPanels" class="poristabcontent">
-hola
-  <% if @issue != nil then %>
-  <p><%= link_to 'Show Panel', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id}, :method => :get %></p>
-  <p><%= link_to 'Show Panel from project root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y"}, :method => :get %></p>
-  <p><%= link_to 'Show Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y"}, :method => :get %></p>
-  <p><%= link_to 'Show Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y"}, :method => :get %></p>
-  <p><%= link_to 'Show Panel from top root', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y"}, :method => :get %></p>
-  <p><%= link_to 'Show Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y"}, :method => :get %></p>
-  <% end %>
   </div>
 </div>
 <%= javascript_include_tag 'csys_poris', :plugin => 'cosmosys_req_poris' %>

@@ -3,19 +3,10 @@
     <%= stylesheet_link_tag 'form/style', :plugin => 'cosmosys_req_poris' %>
 <% end %>
 
-<% if @issue != nil then %>
-<p><%= link_to 'XML Panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :key => User.current.api_key}, {download: "p_"+@issue.id.to_s+".xml"}, :method => :get %></p>
-<p><%= link_to 'XML Panel from project root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y"}, :method => :get %></p>
-<p><%= link_to 'XML Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :across_sub => "y"}, :method => :get %></p>
-<p><%= link_to 'XML Panel from project root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sub => "y"}, :method => :get %></p>
-<p><%= link_to 'XML Panel from top root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y"}, :method => :get %></p>
-<p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :issue_id => @issue.id, :from_root => "y", :across_sup => "y", :across_sub => "y"}, :method => :get %></p>
-<% else %>
 <p><%= link_to 'XML Panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
-<p><%= link_to 'XML Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :across_sub => "y"}, :method => :get %></p>
-<p><%= link_to 'XML Panel from top root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y"}, :method => :get %></p>
-<p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y"}, :method => :get %></p>
-<% end %>
+<p><%= link_to 'XML Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+<p><%= link_to 'XML Panel from top root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+<p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
 
 <div id="porisViewer"></div>
 
