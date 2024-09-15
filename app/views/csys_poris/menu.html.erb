@@ -1,17 +1,38 @@
-<% content_for :header_tags do %>
-    <%= stylesheet_link_tag 'cosmosys_req_poris', :plugin => 'cosmosys_req_poris' %>
-    <%= stylesheet_link_tag 'form/style', :plugin => 'cosmosys_req_poris' %>
-<% end %>
+<%     
+splitted_url = request.fullpath.split('/csys_poris')
+root_url = request.base_url+splitted_url[0]
+url1 = @project.csys.calculate_form_path(root_url, nil, false, false, false, User.current.api_key).html_safe
+url2 = @project.csys.calculate_form_path(root_url, nil, true, false, true, User.current.api_key).html_safe
+url3 = @project.csys.calculate_form_path(root_url, nil, false, true, true, User.current.api_key).html_safe
+%>
+<div class="porisXMLlinks" style="float: right;">
+   <p><%= link_to 'XML Project panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+    <p><%= link_to 'XML Project Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+    <p><%= link_to 'XML Top Node Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+</div>
 
-<p><%= link_to 'XML Panel', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
-<p><%= link_to 'XML Panel incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
-<p><%= link_to 'XML Panel from top root', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
-<p><%= link_to 'XML Panel from top root incl subprojects', {:controller => 'csys_poris',  :action => 'form', :format => 'xml',  :id => @project.identifier, :from_root => "y", :across_sup => "y", :across_sub => "y", :key => User.current.api_key}, {download: "p_"+@project.identifier+".xml" } %></p>
+<div class="poris-content">
+    <div class="poristabsContainer">
+        <button class="loadporislink" onclick="LoadPORISViewer('<%= url1 %>')">Project</button>
+        <button class="loadporislink" onclick="LoadPORISViewer('<%= url2 %>')">Project&Down</button>
+        <button class="loadporislink" onclick="LoadPORISViewer('<%= url3 %>')">TopNode&Down</button>
+    </div>
+    <div id="Panel" class="poristabcontent">
+        <%     
+        content_for :header_tags do %>
+            <%= stylesheet_link_tag 'cosmosys_req_poris', :plugin => 'cosmosys_req_poris' %>
+            <%= stylesheet_link_tag 'form/style', :plugin => 'cosmosys_req_poris' %>
+        <% end %>
+        <div id="porisViewer"></div>
+        <script type="module">
+            import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/form/prod' %>'
 
-<div id="porisViewer"></div>
 
-<script type="module">
-    import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/form/prod' %>'
-    createPorisViewerPanel('<%=@formpath%>', '#porisViewer')
+            window.LoadPORISViewer = function(url) {
+            createPorisViewerPanel(url, '#porisViewer')
+            }
 
-</script>
+            LoadPORISViewer('<%= url1 %>')
+        </script>
+    </div>
+</div>
