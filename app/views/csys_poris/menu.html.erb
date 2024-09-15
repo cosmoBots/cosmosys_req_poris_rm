@@ -21,11 +21,11 @@ url3 = @project.csys.calculate_form_path(root_url, nil, false, true, true, User.
         <%     
         content_for :header_tags do %>
             <%= stylesheet_link_tag 'cosmosys_req_poris', :plugin => 'cosmosys_req_poris' %>
-            <%= stylesheet_link_tag 'form/style', :plugin => 'cosmosys_req_poris' %>
+            <%= stylesheet_link_tag 'porispanel/style', :plugin => 'cosmosys_req_poris' %>
         <% end %>
         <div id="porisViewer"></div>
         <script type="module">
-            import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/form/prod' %>'
+            import { createPorisViewerPanel } from '<%= javascript_path '/plugin_assets/cosmosys_req_poris/javascripts/porispanel/prod' %>'
 
 
             window.LoadPORISViewer = function(url) {

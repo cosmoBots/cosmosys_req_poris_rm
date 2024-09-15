@@ -1,7 +1,7 @@
 class CsysPorisController < ApplicationController
   before_action :find_this_project
-  before_action :authorize, :except => [:find_this_project, :form,:form_commit]
-  skip_before_action :check_if_login_required, only: [:form, :form_commit]
+  before_action :authorize, :except => [:find_this_project], :porispanel, :porispanel_commit]
+  skip_before_action :check_if_login_required, only: [:porispanel, :porispanel_commit]
 
   def find_this_project
     # @project variable must be set before calling the authorize filter
@@ -38,7 +38,7 @@ private def create_project_tree(current_issue, root_url, thisproject, thiskey)
     'subtitle': thisproject.description,
     'expanded': true,
     'id': thisproject.id.to_s,
-    'return_url': root_url+'/csys_poris/'+thisproject.id.to_s+'/form.json'+'?key='+thiskey,
+    'return_url': root_url+'/csys_poris/'+thisproject.id.to_s+'/porispanel.json'+'?key='+thiskey,
     'issue_show_url': issue_url+'?key='+thiskey,
     'issue_new_url': issue_new_url+'?key='+thiskey,
     'issue_edit_url': issue_url+"/edit"+'?key='+thiskey,
@@ -106,7 +106,7 @@ private def create_nonproject_tree(current_issue, root_url, thisproject, thiskey
     'subtitle': current_issue.description,
     'expanded': true,
     'id': current_issue.id.to_s,
-    'return_url': root_url+'/csys_poris/'+thisproject.id.to_s+'/form.json?issue_id='+current_issue.id.to_s+'?key='+thiskey,
+    'return_url': root_url+'/csys_poris/'+thisproject.id.to_s+'/porispanel.json?issue_id='+current_issue.id.to_s+'?key='+thiskey,
     'issue_show_url': issue_url+'?key='+thiskey,
     'issue_new_url': issue_new_url+'?key='+thiskey,
     'issue_edit_url': issue_url+"/edit"+'?key='+thiskey,
@@ -132,9 +132,9 @@ end
 
 # END ******************** Port this to PORIS JSON
 
-  def form
+  def porispanel
     require 'json'
-
+=begin
     # Get the user, either from the key or from the current user
     u = (params[:key] != nil) ? User.find_by_api_key(params[:key]) : User.current
 
@@ -143,7 +143,7 @@ end
     raise ::Unauthorized unless u.class.name == "User" || params[:key] != nil
     raise ::Unauthorized unless u.class.name == "User" || params[:key] != ""
     raise ::Unauthorized unless u.allowed_to?(:csys_poris_form, @project)
-
+=end
     # Do nothing if the request is not a GET
     return unless request.get?
 
@@ -174,9 +174,9 @@ end
         splitted_url = request.fullpath.split('/csys_poris')
         root_url = splitted_url[0]
         if (@issue != nil) then
-          @formpath = root_url+"/csys_poris/"+@project.identifier+"/form.xml?issue_id="+@issue.id.to_s+"&key="+@key
+          @formpath = root_url+"/csys_poris/"+@project.identifier+"/porispanel.xml?issue_id="+@issue.id.to_s+"&key="+@key
         else
-          @formpath = root_url+"/csys_poris/"+@project.identifier+"/form.xml?key="+@key
+          @formpath = root_url+"/csys_poris/"+@project.identifier+"/porispanel.xml?key="+@key
         end
         if across_sub then
           @formpath += "&across_sub=y"
@@ -232,17 +232,17 @@ end
         end
 
         ActiveSupport.escape_html_entities_in_json = false
-        render xml: thismodel.toXML.to_s
+        render inline: thismodel.toXML.to_s
         ActiveSupport.escape_html_entities_in_json = true
       }
     end
   end
 
   def menu
-    form
+    porispanel
   end
 
-  def form_commit
+  def porispanel_commit
     # Get the user, either from the key or from the current user
     u = (params[:key] != nil) ? User.find_by_api_key(params[:key]) : User.current
 
@@ -270,7 +270,7 @@ end
       }
     end
 
-    redirect_to :action => 'form', :method => :get, :id => @project.id
+    redirect_to :action => 'porispanel', :method => :get, :id => @project.id
   end
 
 end
