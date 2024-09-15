@@ -191,12 +191,20 @@ module CosmosysIssuePorisPatch
           puts("root: " + root_issue.project.identifier + " " + root_issue.subject)
           puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
           puts("c: " + c.project.identifier + " " + c.subject)
+          frontier_node = (c.project != root_issue.project) && (c.parent != nil) && (c.parent.project == root_issue.project)
+          frontier_node_mode = (c.project != root_issue.project) && (c.parent != nil) && (c.parent.project != root_issue.project) && (c.parent.parent != nil) && ((c.tracker == @@prModetracker && (c.parent.parent.project == root_issue.project))) 
           if across_sub_projects ||
-            self.issue.project == root_issue.project ||
-            self.issue.parent == nil || 
-            !(self.issue.parent.project != root_issue.project) || 
-            (c.tracker == @@prModetracker && (self.issue.parent.project == root_issue.project)) then
-            puts("Ey!")
+            c.project == root_issue.project ||
+            c.parent == nil || 
+            frontier_node || frontier_node_mode
+            then
+            puts("Ey! " + c.subject)
+            if (frontier_node) then
+              puts("Frontier Node")
+            end
+            if (frontier_node_mode) then
+              puts("Frontier Node Mode")
+            end
             items_dict, child_elem = c.csys.toPORISXMLNode(model, items_dict, root_issue, across_sub_projects)
             if child_elem.class == PORISMode then
               thiselement.addMode(child_elem)
