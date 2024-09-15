@@ -136,14 +136,14 @@ class ARCGenIIIPORIS < PORISDoc
         @mdVariantsMode_Normal = PORISMode.new("VariantsMode_Normal")
         @mdVariantsMode_Extended = PORISMode.new("VariantsMode_Extended")
         @mdVariantsMode_Extended_2 = PORISMode.new("VariantsMode_Extended_2")
-        @mdARCGenIIIMode_Engineering = PORISMode.new("ARCGenIIIMode_Engineering")
-        @mdFirmwareMode_Engineering = PORISMode.new("FirmwareMode_Engineering")
-        @mdVariantsMode_Engineering = PORISMode.new("VariantsMode_Engineering")
-        @mdAcquisitionMode_Engineering = PORISMode.new("AcquisitionMode_Engineering")
-        @mdSubarrayFeatureMode_Engineering = PORISMode.new("SubarrayFeatureMode_Engineering")
-        @mdExposureCtrlMode_Engineering = PORISMode.new("ExposureCtrlMode_Engineering")
-        @mdOutputSourceMode_Engineering = PORISMode.new("OutputSourceMode_Engineering")
-        @mdDimensionsMode_Engineering = PORISMode.new("DimensionsMode_Engineering")
+        @mdARCGenIIIMode_Engineering = PORISMode.new("Engineering")
+        @mdFirmwareMode_Engineering = PORISMode.new("Engineering")
+        @mdVariantsMode_Engineering = PORISMode.new("Engineering")
+        @mdAcquisitionMode_Engineering = PORISMode.new("Engineering")
+        @mdSubarrayFeatureMode_Engineering = PORISMode.new("Engineering")
+        @mdExposureCtrlMode_Engineering = PORISMode.new("Engineering")
+        @mdOutputSourceMode_Engineering = PORISMode.new("Engineering")
+        @mdDimensionsMode_Engineering = PORISMode.new("Engineering")
         self.addItem(@sysARCGenIII)
         @sysARCGenIII.setIdent("ARC-0004")
         @sysARCGenIII.setDescription("")
@@ -1113,7 +1113,7 @@ end
     #  Specific methods
     #----------------------------------------------------------------------
 
-    ## ARCGenIIIMode 
+    ## ARCGenIIIMode
     def get_ARCGenIIIMode
         @sysARCGenIII.getSelectedMode
 	end
@@ -1122,7 +1122,7 @@ end
         @sysARCGenIII.selectMode(mode)
 	end
 
-    ## FirmwareMode 
+    ## FirmwareMode
     def get_FirmwareMode
         @sysFirmware.getSelectedMode
 	end
@@ -1131,7 +1131,7 @@ end
         @sysFirmware.selectMode(mode)
 	end
 
-    ## VariantsMode 
+    ## VariantsMode
     def get_VariantsMode
         @sysVariants.getSelectedMode
 	end
@@ -1140,7 +1140,7 @@ end
         @sysVariants.selectMode(mode)
 	end
 
-    ## AcquisitionMode 
+    ## AcquisitionMode
     def get_AcquisitionMode
         @sysAcquisition.getSelectedMode
 	end
@@ -1149,7 +1149,7 @@ end
         @sysAcquisition.selectMode(mode)
 	end
 
-    ## prParam ShuffleLines 
+    ## prParam ShuffleLines
 
     # ShuffleLines
     def get_ShuffleLinesNode
@@ -1164,7 +1164,7 @@ end
         @prShuffleLines.setValue(value)
 	end
 
-    ## ShuffleLinesMode 
+    ## ShuffleLinesMode
     def get_ShuffleLinesMode
         @prShuffleLines.getSelectedMode
 	end
@@ -1173,9 +1173,9 @@ end
         @prShuffleLines.selectMode(mode)
 	end
 
-    ## prParam Acquisition 
+    ## prParam Acquisition
 
-    # ShuffleLinesDouble  
+    # ShuffleLinesDouble
     def get_ShuffleLinesDouble
         v = @prShuffleLines.getSelectedValue
         v.class = PORISValueFloat
@@ -1186,7 +1186,7 @@ end
         @prShuffleLines.getSelectedValuew.setData(data)
 	end
 
-    ## prParam ShiftNumber 
+    ## prParam ShiftNumber
 
     # ShiftNumber
     def get_ShiftNumberNode
@@ -1201,7 +1201,7 @@ end
         @prShiftNumber.setValue(value)
 	end
 
-    ## ShiftNumberMode 
+    ## ShiftNumberMode
     def get_ShiftNumberMode
         @prShiftNumber.getSelectedMode
 	end
@@ -1210,9 +1210,9 @@ end
         @prShiftNumber.selectMode(mode)
 	end
 
-    ## prParam Acquisition 
+    ## prParam Acquisition
 
-    # ShiftNumberDouble  
+    # ShiftNumberDouble
     def get_ShiftNumberDouble
         v = @prShiftNumber.getSelectedValue
         v.class = PORISValueFloat
@@ -1223,7 +1223,7 @@ end
         @prShiftNumber.getSelectedValuew.setData(data)
 	end
 
-    ## SubarrayFeatureMode 
+    ## SubarrayFeatureMode
     def get_SubarrayFeatureMode
         @sysSubarrayFeature.getSelectedMode
 	end
@@ -1232,7 +1232,7 @@ end
         @sysSubarrayFeature.selectMode(mode)
 	end
 
-    ## prParam Cols 
+    ## prParam Cols
 
     # Cols
     def get_ColsNode
@@ -1247,7 +1247,7 @@ end
         @prCols.setValue(value)
 	end
 
-    ## ColsMode 
+    ## ColsMode
     def get_ColsMode
         @prCols.getSelectedMode
 	end
@@ -1256,9 +1256,9 @@ end
         @prCols.selectMode(mode)
 	end
 
-    ## prParam SubarrayFeature 
+    ## prParam SubarrayFeature
 
-    # ColsDouble  
+    # ColsDouble
     def get_ColsDouble
         v = @prCols.getSelectedValue
         v.class = PORISValueFloat
@@ -1269,7 +1269,7 @@ end
         @prCols.getSelectedValuew.setData(data)
 	end
 
-    ## prParam offsetRow 
+    ## prParam offsetRow
 
     # offsetRow
     def get_offsetRowNode
@@ -1284,7 +1284,7 @@ end
         @proffsetRow.setValue(value)
 	end
 
-    ## offsetRowMode 
+    ## offsetRowMode
     def get_offsetRowMode
         @proffsetRow.getSelectedMode
 	end
@@ -1293,9 +1293,9 @@ end
         @proffsetRow.selectMode(mode)
 	end
 
-    ## prParam SubarrayFeature 
+    ## prParam SubarrayFeature
 
-    # offsetRowDouble  
+    # offsetRowDouble
     def get_offsetRowDouble
         v = @proffsetRow.getSelectedValue
         v.class = PORISValueFloat
@@ -1306,7 +1306,7 @@ end
         @proffsetRow.getSelectedValuew.setData(data)
 	end
 
-    ## prParam Rows 
+    ## prParam Rows
 
     # Rows
     def get_RowsNode
@@ -1321,7 +1321,7 @@ end
         @prRows.setValue(value)
 	end
 
-    ## RowsMode 
+    ## RowsMode
     def get_RowsMode
         @prRows.getSelectedMode
 	end
@@ -1330,9 +1330,9 @@ end
         @prRows.selectMode(mode)
 	end
 
-    ## prParam SubarrayFeature 
+    ## prParam SubarrayFeature
 
-    # RowsDouble  
+    # RowsDouble
     def get_RowsDouble
         v = @prRows.getSelectedValue
         v.class = PORISValueFloat
@@ -1343,7 +1343,7 @@ end
         @prRows.getSelectedValuew.setData(data)
 	end
 
-    ## prParam offsetCol 
+    ## prParam offsetCol
 
     # offsetCol
     def get_offsetColNode
@@ -1358,7 +1358,7 @@ end
         @proffsetCol.setValue(value)
 	end
 
-    ## offsetColMode 
+    ## offsetColMode
     def get_offsetColMode
         @proffsetCol.getSelectedMode
 	end
@@ -1367,9 +1367,9 @@ end
         @proffsetCol.selectMode(mode)
 	end
 
-    ## prParam SubarrayFeature 
+    ## prParam SubarrayFeature
 
-    # offsetColDouble  
+    # offsetColDouble
     def get_offsetColDouble
         v = @proffsetCol.getSelectedValue
         v.class = PORISValueFloat
@@ -1380,7 +1380,7 @@ end
         @proffsetCol.getSelectedValuew.setData(data)
 	end
 
-    ## ExposureCtrlMode 
+    ## ExposureCtrlMode
     def get_ExposureCtrlMode
         @sysExposureCtrl.getSelectedMode
 	end
@@ -1389,7 +1389,7 @@ end
         @sysExposureCtrl.selectMode(mode)
 	end
 
-    ## OpenShutterMode 
+    ## OpenShutterMode
     def get_OpenShutterMode
         @sysOpenShutter.getSelectedMode
 	end
@@ -1398,7 +1398,7 @@ end
         @sysOpenShutter.selectMode(mode)
 	end
 
-    ## prParam ExpTime 
+    ## prParam ExpTime
 
     # ExpTime
     def get_ExpTimeNode
@@ -1413,7 +1413,7 @@ end
         @prExpTime.setValue(value)
 	end
 
-    ## ExpTimeMode 
+    ## ExpTimeMode
     def get_ExpTimeMode
         @prExpTime.getSelectedMode
 	end
@@ -1422,9 +1422,9 @@ end
         @prExpTime.selectMode(mode)
 	end
 
-    ## prParam ExposureCtrl 
+    ## prParam ExposureCtrl
 
-    # ExpTimeDouble  
+    # ExpTimeDouble
     def get_ExpTimeDouble
         v = @prExpTime.getSelectedValue
         v.class = PORISValueFloat
@@ -1434,9 +1434,9 @@ end
     def set_ExpTimeDouble(data)
         @prExpTime.getSelectedValuew.setData(data)
 	end
-    ## prParam ExposureCtrl 
+    ## prParam ExposureCtrl
 
-    # ExpTimeDouble  
+    # ExpTimeDouble
     def get_ExpTimeDouble
         v = @prExpTime.getSelectedValue
         v.class = PORISValueFloat
@@ -1447,7 +1447,7 @@ end
         @prExpTime.getSelectedValuew.setData(data)
 	end
 
-    ## PixelSpeedMode 
+    ## PixelSpeedMode
     def get_PixelSpeedMode
         @sysPixelSpeed.getSelectedMode
 	end
@@ -1456,7 +1456,7 @@ end
         @sysPixelSpeed.selectMode(mode)
 	end
 
-    ## prParam numOfFrames 
+    ## prParam numOfFrames
 
     # numOfFrames
     def get_numOfFramesNode
@@ -1471,7 +1471,7 @@ end
         @prnumOfFrames.setValue(value)
 	end
 
-    ## numOfFramesMode 
+    ## numOfFramesMode
     def get_numOfFramesMode
         @prnumOfFrames.getSelectedMode
 	end
@@ -1480,9 +1480,9 @@ end
         @prnumOfFrames.selectMode(mode)
 	end
 
-    ## prParam ExposureCtrl 
+    ## prParam ExposureCtrl
 
-    # numOfFramesDouble  
+    # numOfFramesDouble
     def get_numOfFramesDouble
         v = @prnumOfFrames.getSelectedValue
         v.class = PORISValueFloat
@@ -1493,7 +1493,7 @@ end
         @prnumOfFrames.getSelectedValuew.setData(data)
 	end
 
-    ## prParam CalibGain 
+    ## prParam CalibGain
 
     # CalibGain
     def get_CalibGainNode
@@ -1508,7 +1508,7 @@ end
         @prCalibGain.setValue(value)
 	end
 
-    ## CalibGainMode 
+    ## CalibGainMode
     def get_CalibGainMode
         @prCalibGain.getSelectedMode
 	end
@@ -1517,9 +1517,9 @@ end
         @prCalibGain.selectMode(mode)
 	end
 
-    ## prParam ExposureCtrl 
+    ## prParam ExposureCtrl
 
-    # CalibGainDouble  
+    # CalibGainDouble
     def get_CalibGainDouble
         v = @prCalibGain.getSelectedValue
         v.class = PORISValueFloat
@@ -1530,7 +1530,7 @@ end
         @prCalibGain.getSelectedValuew.setData(data)
 	end
 
-    ## OutputSourceMode 
+    ## OutputSourceMode
     def get_OutputSourceMode
         @sysOutputSource.getSelectedMode
 	end
@@ -1539,7 +1539,7 @@ end
         @sysOutputSource.selectMode(mode)
 	end
 
-    ## RecompositionMode 
+    ## RecompositionMode
     def get_RecompositionMode
         @sysRecomposition.getSelectedMode
 	end
@@ -1548,7 +1548,7 @@ end
         @sysRecomposition.selectMode(mode)
 	end
 
-    ## DimensionsMode 
+    ## DimensionsMode
     def get_DimensionsMode
         @sysDimensions.getSelectedMode
 	end
@@ -1557,7 +1557,7 @@ end
         @sysDimensions.selectMode(mode)
 	end
 
-    ## prParam uiRows 
+    ## prParam uiRows
 
     # uiRows
     def get_uiRowsNode
@@ -1572,7 +1572,7 @@ end
         @pruiRows.setValue(value)
 	end
 
-    ## uiRowsMode 
+    ## uiRowsMode
     def get_uiRowsMode
         @pruiRows.getSelectedMode
 	end
@@ -1581,9 +1581,9 @@ end
         @pruiRows.selectMode(mode)
 	end
 
-    ## prParam Dimensions 
+    ## prParam Dimensions
 
-    # uiRowsDouble  
+    # uiRowsDouble
     def get_uiRowsDouble
         v = @pruiRows.getSelectedValue
         v.class = PORISValueFloat
@@ -1593,9 +1593,9 @@ end
     def set_uiRowsDouble(data)
         @pruiRows.getSelectedValuew.setData(data)
 	end
-    ## prParam Dimensions 
+    ## prParam Dimensions
 
-    # uiRowsDouble  
+    # uiRowsDouble
     def get_uiRowsDouble
         v = @pruiRows.getSelectedValue
         v.class = PORISValueFloat
@@ -1606,7 +1606,7 @@ end
         @pruiRows.getSelectedValuew.setData(data)
 	end
 
-    ## prParam uiCols 
+    ## prParam uiCols
 
     # uiCols
     def get_uiColsNode
@@ -1621,7 +1621,7 @@ end
         @pruiCols.setValue(value)
 	end
 
-    ## uiColsMode 
+    ## uiColsMode
     def get_uiColsMode
         @pruiCols.getSelectedMode
 	end
@@ -1630,9 +1630,9 @@ end
         @pruiCols.selectMode(mode)
 	end
 
-    ## prParam Dimensions 
+    ## prParam Dimensions
 
-    # uiColsDouble  
+    # uiColsDouble
     def get_uiColsDouble
         v = @pruiCols.getSelectedValue
         v.class = PORISValueFloat
@@ -1643,7 +1643,7 @@ end
         @pruiCols.getSelectedValuew.setData(data)
 	end
 
-    ## prParam Binning 
+    ## prParam Binning
 
     # Binning
     def get_BinningNode
@@ -1658,7 +1658,7 @@ end
         @prBinning.setValue(value)
 	end
 
-    ## BinningMode 
+    ## BinningMode
     def get_BinningMode
         @prBinning.getSelectedMode
 	end
@@ -1691,4 +1691,12 @@ end
         # Override this
         true
 	end
+
 end
+
+puts ("=begin")
+testModel = ARCGenIIIPORIS.new(16)
+rubyCode = testModel.toRuby
+puts("------- Constructor code --------")
+puts ("=end")
+puts(rubyCode['constructor'])

@@ -3,6 +3,37 @@ require 'date'
 require 'tzinfo'
 
 debug = false
+
+
+def nametoidl(n)
+  ret = n.gsub("(", "_")
+  ret = ret.gsub(")", "_")
+  ret = ret.gsub("Ñ", "NY")
+  ret = ret.gsub(".", "_")
+  ret = ret.gsub("+", "p")
+  ret = ret.gsub("/", "_")
+  ret = ret.gsub("¿", "_")
+  ret = ret.gsub("?", "_")
+  ret = ret.gsub("-", "_")
+  ret = ret.gsub("á", "a")
+  ret = ret.gsub("é", "e")
+  ret = ret.gsub("í", "i")
+  ret = ret.gsub("ó", "o")
+  ret = ret.gsub("ú", "u")
+  ret = ret.gsub("Á", "A")
+  ret = ret.gsub("É", "E")
+  ret = ret.gsub("Í", "I")
+  ret = ret.gsub("Ó", "O")
+  ret = ret.gsub("Ú", "U")
+  ret = ret.gsub("ñ", "ny")
+
+  if ret.downcase == "sequence"
+    ret += "b"
+  end
+
+  ret
+end
+
 ############################### PORIS subtype classes (not PORIS items) #########################################
 
 ############################### PORIS Formatters #########################################
@@ -551,6 +582,66 @@ class PORIS
     end
     ret
   end
+
+  def getRubyName
+    nametoidl(self.getName)
+  end
+
+  def getRubyIdent
+    "@#{self.class.getRubyPrefix}#{self.getRubyName}"
+  end
+
+  def self.getRubyPrefix
+    "ERROR_NODE"
+  end
+
+  def self.getRubyFuncParticle
+    "ERROR_NODE"
+  end
+
+  def getRubyConstructorString
+    "#{self.class.name}.new('#{self.getRubyName}')"
+  end
+
+  def toRuby
+    puts ("Entramos por aquí PORIS!!!" + self.getName + " " + self.class.name)
+
+    ret = {}
+=begin
+
+    @prShuffleLines = PORISParam.new("ShuffleLines")
+    self.addItem(@prShuffleLines)
+    @prShuffleLines.setIdent("ARC-0080")
+    @prShuffleLines.setDescription("")
+=end
+
+    thisident = self.getRubyIdent
+
+    ret['constructor'] = "\t\t#{thisident} = #{getRubyConstructorString}\n"
+    ret['constructor'] += "\t\tself.addItem(#{thisident})\n"
+    ret['constructor'] += "\t\t#{thisident}.setIdent('#{self.getIdent}')\n"
+    ret['constructor'] += "\t\t#{thisident}.setDescription('#{self.getDescription}')\n"
+
+=begin
+
+    ## prParam ShuffleLines
+
+    def get_ShuffleLinesNode
+        @prShuffleLines
+	  end
+
+    def get_ShuffleLines
+        @prShuffleLines.getSelectedValue
+	  end
+=end
+
+    ret['functions'] = "## #{self.class.getRubyPrefix}#{self.class.getRubyFuncParticle} #{self.getRubyName}\n\n"
+    ret['functions'] += "def get_#{self.getRubyName}Node\n"
+    ret['functions'] += "\t#{thisident}\n"
+    ret['functions'] += "end\n"
+
+    return ret
+  end
 end
 
 
@@ -602,6 +693,16 @@ class PORISValue < PORIS
     ret.setXMLFormatter(formatter)
     ret
   end
+
+  def self.getRubyPrefix
+    "vl"
+  end
+
+  def self.getRubyFuncParticle
+    "Value"
+  end
+
+
 end
 
 ########################################################
@@ -1020,6 +1121,13 @@ class PORISValueFloat < PORISValueData
 
     ret
   end
+
+
+  def getRubyConstructorString
+    "#{self.class.name}.new('#{self.getRubyName}',#{self.getMin.to_s},#{self.getDefaultData.to_s},#{self.getMax.to_s})"
+  end
+
+
 end
 
 #######################################
@@ -1252,6 +1360,32 @@ class PORISMode < PORIS
     end
     ret
   end
+
+
+  def self.getRubyPrefix
+    "md"
+  end
+
+  def self.getRubyFuncParticle
+    "Mode"
+  end
+
+  def toRuby
+    puts ("Entramos por aquí PARAM!!!")
+    ret = super
+
+    thisident = self.getRubyIdent
+
+    @values.each do |myid, value|
+      puts("---------- Processing value #{value.getName} ---------")
+      m_ret = value.toRuby
+      ret['constructor'] += m_ret['constructor']
+      ret['constructor'] += "\t\t#{thisident}.addValue(#{value.getRubyIdent})\n"
+    end
+
+    return ret
+  end
+
 end
 
 
@@ -1607,6 +1741,124 @@ class PORISNode < PORIS
     end
     ret
   end
+
+  def getRubyModeNamePrefix
+    "#{self.getRubyName}Mode_"
+  end
+
+
+  def getRubyModeIdentPrefix
+    "@#{PORISMode.getRubyPrefix}#{self.getRubyModeNamePrefix}"
+  end
+
+  def toRuby
+    puts ("Entramos por aquí PORISNode!!!")
+    ret = super
+
+    thisident = self.getRubyIdent
+    thisModeIdentPrefix = self.getRubyModeIdentPrefix
+    thisUnknownModeIdent = thisModeIdentPrefix+"UNKNOWN"
+    thisUnknownModeName = self.getRubyModeNamePrefix+"UNKNOWN"
+
+=begin
+
+    @mdShuffleLinesMode_UNKNOWN = PORISMode.new("ShuffleLinesMode_UNKNOWN")
+=end
+
+    ret['constructor'] += "\t\t#{thisUnknownModeIdent} = PORISMode.new('#{thisUnknownModeName}')\n"
+
+=begin
+    self.addItem(@mdShuffleLinesMode_UNKNOWN)
+    @mdShuffleLinesMode_UNKNOWN.setIdent("UNKM_ARC-0080")
+    @mdShuffleLinesMode_UNKNOWN.setDescription("Unknown mode for ShuffleLines")
+    @prShuffleLines.addMode(@mdShuffleLinesMode_UNKNOWN)
+=end
+    ret['constructor'] += "\t\tself.addItem(#{thisUnknownModeIdent})\n"
+    ret['constructor'] += "\t\t#{thisUnknownModeIdent}.setIdent('UNKM_#{self.getIdent}')\n"
+    ret['constructor'] += "\t\t#{thisUnknownModeIdent}.setDescription('Unknown mode for S#{self.getDescription}')\n"
+    ret['constructor'] += "\t\t#{thisident}.addMode(#{thisUnknownModeIdent})\n"
+
+=begin
+    @mdAcquisitionMode_UNKNOWN.addSubMode(@mdShuffleLinesMode_UNKNOWN)
+=end
+
+    @modes.each do |myid, mode|
+      m_ret = mode.toRuby
+      ret['constructor'] += m_ret['constructor']
+      ret['constructor'] += "\t\t#{thisident}.addMode(#{mode.getRubyIdent})\n"
+    end
+
+=begin
+
+      @vlShuffleLines_Full_Range = PORISValueFloat.new("ShuffleLines_Full_Range",0,200,1000)
+      @mdShuffleLinesMode_Normal = PORISMode.new("ShuffleLinesMode_Normal")
+=end
+=begin
+      self.addItem(@vlShuffleLines_Full_Range)
+      @vlShuffleLines_Full_Range.setIdent("ARC-0081")
+      @vlShuffleLines_Full_Range.setDescription("")
+      @prShuffleLines.addValue(@vlShuffleLines_Full_Range)
+      self.addItem(@mdShuffleLinesMode_Normal)
+      @mdShuffleLinesMode_Normal.setIdent("ARC-0082")
+      @mdShuffleLinesMode_Normal.setDescription("")
+      @prShuffleLines.addMode(@mdShuffleLinesMode_Normal)
+
+      # Marcamos ShuffleLinesMode_Normal como elegible para AcquisitionMode_Shuffling
+      @mdAcquisitionMode_Shuffling.addSubMode(@mdShuffleLinesMode_Normal)
+      # Marcamos ShuffleLinesMode_Normal como elegible para AcquisitionMode_Engineering
+      @mdAcquisitionMode_Engineering.addSubMode(@mdShuffleLinesMode_Normal)
+      # Marcamos ShuffleLines_Full_Range como elegible para ShuffleLinesMode_Normal
+      @mdShuffleLinesMode_Normal.addValue(@vlShuffleLines_Full_Range)
+=end
+
+=begin
+
+    ## prParam ShuffleLines
+
+    # ShuffleLines
+    def get_ShuffleLinesNode
+        @prShuffleLines
+	end
+
+    def get_ShuffleLines
+        @prShuffleLines.getSelectedValue
+	end
+
+    def set_ShuffleLines(value)
+        @prShuffleLines.setValue(value)
+	end
+
+    ## ShuffleLinesMode
+    def get_ShuffleLinesMode
+        @prShuffleLines.getSelectedMode
+	end
+
+    def set_ShuffleLinesMode(mode)
+        @prShuffleLines.selectMode(mode)
+	end
+
+    ## prParam Acquisition
+
+    # ShuffleLinesDouble
+    def get_ShuffleLinesDouble
+        v = @prShuffleLines.getSelectedValue
+        v.class = PORISValueFloat
+        v.getData
+	end
+
+    def set_ShuffleLinesDouble(data)
+        @prShuffleLines.getSelectedValuew.setData(data)
+	end
+
+
+=end
+
+    return ret
+  end
+
+
+
+
 end
 
 ##########################################
@@ -1769,6 +2021,76 @@ class PORISParam < PORISNode
 
     ret
   end
+
+
+  def self.getRubyPrefix
+    "pr"
+  end
+
+  def self.getRubyFuncParticle
+    "Param"
+  end
+
+  def getRubyValueNamePrefix
+    "#{self.getRubyName}_"
+  end
+
+  def getRubyValueIdentPrefix
+    "@#{PORISValue.getRubyPrefix}#{self.getRubyModeNamePrefix}"
+  end
+
+
+  def toRuby
+    puts ("Entramos por aquí PARAM!!!")
+    ret = super
+
+    thisident = self.getRubyIdent
+    thisModeIdentPrefix = self.getRubyModeIdentPrefix
+    thisUnknownModeIdent = thisModeIdentPrefix+"UNKNOWN"
+    thisUnknownValueIdent = getRubyValueIdentPrefix+"UNKNOWN"
+    thisUnknownValueName = self.getRubyValueNamePrefix+"UNKNOWN"
+
+
+=begin
+    @vlShuffleLines_UNKNOWN = PORISValue.new("ShuffleLines_UNKNOWN")
+=end
+
+    ret['constructor'] += "\t\t#{thisUnknownValueIdent} = PORISValue.new('#{thisUnknownValueName}')\n"
+
+=begin
+    self.addItem(@vlShuffleLines_UNKNOWN)
+    @vlShuffleLines_UNKNOWN.setIdent("UNK_ARC-0080")
+    @vlShuffleLines_UNKNOWN.setDescription("Unknown value for ShuffleLines")
+    @prShuffleLines.addValue(@vlShuffleLines_UNKNOWN)
+=end
+    ret['constructor'] += "\t\tself.addItem(#{thisUnknownValueIdent})\n"
+    ret['constructor'] += "\t\t#{thisUnknownValueIdent}.setIdent('UNK_#{self.getIdent}')\n"
+    ret['constructor'] += "\t\t#{thisUnknownValueIdent}.setDescription('Unknown value for S#{self.getDescription}')\n"
+    ret['constructor'] += "\t\t#{thisident}.addValue(#{thisUnknownValueIdent})\n"
+
+=begin
+    @mdShuffleLinesMode_UNKNOWN.addValue(@vlShuffleLines_UNKNOWN)
+=end
+    ret['constructor'] += "\t\t#{thisUnknownModeIdent}.addValue(#{thisUnknownValueIdent})\n"
+
+    @values.each do |myid, value|
+      puts("---------- Processing value #{value.getName} ---------")
+      m_ret = value.toRuby
+      ret['constructor'] += m_ret['constructor']
+      ret['constructor'] += "\t\t#{thisident}.addValue(#{value.getRubyIdent})\n"
+    end
+
+    return ret
+  end
+
+
+
+
+
+
+
+
+
 end
 require 'rexml/document'
 
@@ -1924,6 +2246,45 @@ class PORISSys < PORISNode
 
     ret
   end
+
+  def self.getRubyPrefix
+    "sys"
+  end
+
+  def self.getRubyFuncParticle
+    "Subsystem"
+  end
+
+
+  def toRuby
+    puts ("Entramos por aquí SYS!!!!")
+    ret = super
+
+    thisident = self.getRubyIdent
+    thisModeIdentPrefix = self.getRubyModeIdentPrefix
+
+    @params.each do |myid, param|
+      puts("---------- Processing param #{param.getName} ---------")
+      m_ret = param.toRuby
+      ret['constructor'] += m_ret['constructor']
+      ret['constructor'] += "\t\t#{thisident}.addParam(#{param.getRubyIdent})\n"
+    end
+
+
+    @subsystems.each do |myid, ss|
+      puts("---------- Processing param #{ss.getName} ---------")
+      m_ret = ss.toRuby
+      ret['constructor'] += m_ret['constructor']
+      ret['constructor'] += "\t\t#{thisident}.addSubsystem(#{ss.getRubyIdent})\n"
+    end
+
+    return ret
+  end
+
+
+
+
+
 end
 
 class PORISDoc
@@ -2057,5 +2418,23 @@ class PORISDoc
     end
 
     ret
+  end
+
+  def toRuby
+    ret = {}
+    ret['constructor'] = "require_relative 'PORIS'\n\n"
+
+    ret['constructor'] += "class #{self.root.getRubyName}PORIS < PORISDoc\n"
+    ret['constructor'] += "\tdef initialize(project_id)\n"
+    ret['constructor'] += "\t\tsuper(project_id)\n"
+    rootNodeCode = self.root.toRuby
+    ret['constructor'] += rootNodeCode['constructor']
+    ret['constructor'] += "\tend\n"
+    ret['constructor'] += "end\n"
+
+    ret['constructor'] += "thismodel = #{self.root.getRubyName}PORIS.new(#{self.getProjectId})\n"
+
+    return ret
+
   end
 end
