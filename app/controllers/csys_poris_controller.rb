@@ -1,6 +1,6 @@
 class CsysPorisController < ApplicationController
   before_action :find_this_project
-  before_action :authorize, :except => [:find_this_project], :porispanel, :porispanel_commit]
+  before_action :authorize, :except => [:find_this_project, :porispanel, :porispanel_commit]
   skip_before_action :check_if_login_required, only: [:porispanel, :porispanel_commit]
 
   def find_this_project
