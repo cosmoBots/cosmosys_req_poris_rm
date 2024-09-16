@@ -90,6 +90,38 @@ class CsysPorisController < ApplicationController
         render xml: thismodel.toXML.to_s
         ActiveSupport.escape_html_entities_in_json = true
       }
+      format.rb {
+        is_project = @issue ? false : true
+
+        across_sub = false
+        if params[:across_sub] != nil then
+          if params[:across_sub] == "y" then
+            across_sub = true
+          end
+        end
+        across_sup= false
+        if params[:across_sup] != nil then
+          if params[:across_sup] == "y" then
+            across_sup = true
+          end
+        end
+        from_root= false
+        if params[:from_root] != nil then
+          if params[:from_root] == "y" then
+            from_root = true
+          end
+        end
+
+        if (@issue != nil) then
+          thismodel = @issue.csys.toPORISXML(from_root, across_sup, across_sub)
+        else
+          thismodel = @project.csys.toPORISXML(across_sup, across_sub)
+        end
+
+        ActiveSupport.escape_html_entities_in_json = false
+        render xml: thismodel.toRuby.to_s
+        ActiveSupport.escape_html_entities_in_json = true
+      }
     end
   end
 

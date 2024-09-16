@@ -25,5 +25,6 @@ Redmine::Plugin.register :cosmosys_req_poris do
   require 'csys_poris_issue_patch'
 
   Mime::Type.register 'text/poris', :poris
+  Mime::Type.register 'text/ruby', :rb
 
 end

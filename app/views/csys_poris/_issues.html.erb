@@ -48,6 +48,9 @@ then
     <%= link_to 'PORISXML', { :controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id}, download: @issue.subject+".poris" %></p>
     <%= link_to 'PORISXML for Project', { :controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id, :from_root => 'y'}, download: @issue.subject+"_r.poris" %></p>
     <%= link_to 'PORISXML for Node&Down', { :controller => 'csys_poris', :action => 'porispanel', :format => 'poris', :issue_id => @issue.id, :across_sub => 'y'}, download: @issue.subject+"_d.poris" %></p>
+    <%= link_to 'PORISRuby', { :controller => 'csys_poris', :action => 'porispanel', :format => 'rb', :issue_id => @issue.id}, download: @issue.subject+".rb" %></p>
+    <%= link_to 'PORISRuby for Project', { :controller => 'csys_poris', :action => 'porispanel', :format => 'rb', :issue_id => @issue.id, :from_root => 'y'}, download: @issue.subject+"_r.rb" %></p>
+    <%= link_to 'PORISRuby for Node&Down', { :controller => 'csys_poris', :action => 'porispanel', :format => 'rb', :issue_id => @issue.id, :across_sub => 'y'}, download: @issue.subject+"_d.rb" %></p>
 </div>
 </div>
 <!--script>
