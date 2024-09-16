@@ -587,8 +587,12 @@ class PORIS
     nametoidl(self.getName)
   end
 
+  def getRubyAccessor
+    "#{self.class.getRubyPrefix}#{self.getRubyName}"
+  end
+
   def getRubyIdent
-    "@#{self.class.getRubyPrefix}#{self.getRubyName}"
+    "@#{getRubyAccessor}"
   end
 
   def self.getRubyPrefix
@@ -604,7 +608,6 @@ class PORIS
   end
 
   def toRuby
-    puts ("Entramos por aquí PORIS!!!" + self.getName + " " + self.class.name)
 
     ret = {}
 =begin
@@ -617,7 +620,9 @@ class PORIS
 
     thisident = self.getRubyIdent
 
+    ret['attributes'] = "\tattr_reader :#{self.getRubyAccessor}\n"
     ret['constructor'] = "\t\t#{thisident} = #{getRubyConstructorString}\n"
+    # ret['constructor'] = ("Entramos por aquí PORIS!!!" + self.getName + " " + self.class.name + "\n")
     ret['constructor'] += "\t\tself.addItem(#{thisident})\n"
     ret['constructor'] += "\t\t#{thisident}.setIdent('#{self.getIdent}')\n"
     ret['constructor'] += "\t\t#{thisident}.setDescription('#{self.getDescription}')\n"
@@ -635,10 +640,12 @@ class PORIS
 	  end
 =end
 
-    ret['functions'] = "## #{self.class.getRubyPrefix}#{self.class.getRubyFuncParticle} #{self.getRubyName}\n\n"
-    ret['functions'] += "def get_#{self.getRubyName}Node\n"
-    ret['functions'] += "\t#{thisident}\n"
-    ret['functions'] += "end\n"
+    ret['destinations'] = ""
+
+    ret['functions'] = "\t## #{self.class.getRubyPrefix}#{self.class.getRubyFuncParticle} #{self.getRubyName}\n\n"
+    ret['functions'] += "\tdef get_#{self.getRubyName}Node\n"
+    ret['functions'] += "\t\t#{thisident}\n"
+    ret['functions'] += "\tend\n"
 
     return ret
   end
@@ -1127,7 +1134,6 @@ class PORISValueFloat < PORISValueData
     "#{self.class.name}.new('#{self.getRubyName}',#{self.getMin.to_s},#{self.getDefaultData.to_s},#{self.getMax.to_s})"
   end
 
-
 end
 
 #######################################
@@ -1180,7 +1186,7 @@ class PORISMode < PORIS
 
   # Gets the most suitable value from the list of eligible ones.
   def getEligibleValue(v, current)
-    if debug
+    if false
       if v
         puts "Entering in PORISMode getEligibleValue for mode #{getName} with the candidate #{v.getName}"
       else
@@ -1209,8 +1215,8 @@ class PORISMode < PORIS
   end
 
   # Gets the most suitable submode from the list of eligible ones.
-  def get_eligible_sub_mode(m, current)
-    if debug
+  def getEligibleSubMode(m, current)
+    if false
       if m
         puts "Entering in PORISMode getEligibleSubMode with mode #{getName} with the candidate #{m.getName}"
       else
@@ -1230,11 +1236,11 @@ class PORISMode < PORIS
         ret = current
       else
         # We will try to find the default mode for the PORISNode holding the candidate mode
-        defmode = m.getParent.get_default_mode
+        defmode = m.getParent.getDefaultMode
         if @submodes.key?(defmode.getId)
           ret = defmode
         else
-          if debug
+          if false
             puts "None of the two given or the default one, I have only these keys #{@submodes.keys}"
           end
 
@@ -1242,7 +1248,7 @@ class PORISMode < PORIS
           # Search the first submode with the same parent than the candidate
           # Iterating all submodes
           @submodes.each_value do |s|
-            if debug
+            if false
               puts "#{s.getParent} #{s.getParent.getName}"
             end
 
@@ -1258,7 +1264,7 @@ class PORISMode < PORIS
           if ret.nil?
             # We finally did not find an eligible submode for this mode, for the PORISNode item which is parent of m
             # So we will return the UNKNOWN mode (the first one of the item)
-            ret = m.getParent.modes[m.getParent.modes.keys.first]
+            ret = m.getParent.getModes[m.getParent.getModes.keys.first]
           end
         end
       end
@@ -1371,16 +1377,18 @@ class PORISMode < PORIS
   end
 
   def toRuby
-    puts ("Entramos por aquí PARAM!!!")
+    # puts ("Entramos por aquí PARAM!!!")
     ret = super
 
     thisident = self.getRubyIdent
 
     @values.each do |myid, value|
-      puts("---------- Processing value #{value.getName} ---------")
-      m_ret = value.toRuby
-      ret['constructor'] += m_ret['constructor']
-      ret['constructor'] += "\t\t#{thisident}.addValue(#{value.getRubyIdent})\n"
+      # puts("---------- Processing value #{value.getName} ---------")
+      ret['destinations'] += "\t\t#{thisident}.addValue(#{value.getRubyIdent})\n"
+    end
+    @submodes.each do |myid, mode|
+      # puts("---------- Processing value #{value.getName} ---------")
+      ret['destinations'] += "\t\t#{thisident}.addSubMode(#{mode.getRubyIdent})\n"
     end
 
     return ret
@@ -1422,6 +1430,10 @@ class PORISNode < PORIS
     end
   end
 
+  def getModes
+    @modes
+  end
+
   # Getter for the default mode
   def getDefaultMode
     @defaultMode
@@ -1448,7 +1460,7 @@ class PORISNode < PORIS
     # First we will get an eligible mode given our candidate
     ret = getEligibleMode(m)
     if ret.nil?
-      if debug
+      if false
         puts "New eligible mode is NULL, so we have to set initialize the item to select the unknown mode"
       end
       ret = init
@@ -1456,7 +1468,7 @@ class PORISNode < PORIS
 
     # If the mode has changed from the previous one, we shall propagate the change
     if ret != getSelectedMode
-      if debug
+      if false
         puts "New mode is #{ret.getName}"
         if getSelectedMode
           puts " which is different from #{getSelectedMode.getName}"
@@ -1498,14 +1510,14 @@ class PORISNode < PORIS
   # This function is normally only called internally, in reaction to
   # the circumstances of not having a selected mode when it is expected to have
   def init
-    if debug
+    if false
       puts "----> Init #{getName}, mode list len: #{@modes.length}"
     end
 
     # We select the first mode of the list, and set it as the selected one
     firstMode = @modes[@modes.keys[0]]
     @selectedMode = firstMode
-    if debug
+    if false
       puts "Init #{getName}: #{firstMode.getName}"
     end
     @selectedMode
@@ -1514,7 +1526,7 @@ class PORISNode < PORIS
   # This function gets the selected mode of a PORISNode.  In case there is no selected mode
   # it forces the selection of the first one (UNKNOWN)
   def getNotNullSelectedMode
-    if debug
+    if false
       puts "Entering in PORISNode getNotNullSelectedMode #{getName}"
     end
 
@@ -1523,7 +1535,7 @@ class PORISNode < PORIS
       # There is no selected mode?  Then we will force the item initialization
       # This normally is not occurring, because from the first mode added, the item
       # has a selected one
-      if debug
+      if false
         puts "- selectedMode is NULL"
       end
 
@@ -1532,7 +1544,7 @@ class PORISNode < PORIS
       ret = init
     end
 
-    if debug
+    if false
       puts "- selectedMode is now #{getSelectedMode.getName}"
     end
     # This looks like redundant, but it is not!!!
@@ -1555,7 +1567,7 @@ class PORISNode < PORIS
   # allows disabling parts of a PORIS subtree depending on the choices made at higher levels
   # TODO: Implement a check to confirm m and current are siblings
   def getEligibleMode(m)
-    if debug
+    if false
       puts "Entering in PORISNode #{getName}.getEligibleMode(#{m.getName})"
     end
 
@@ -1564,14 +1576,14 @@ class PORISNode < PORIS
       # m is a mode of the current item
       if getParent.nil?
         # Current item has no parent, no restrictions to set m
-        if debug
+        if false
           puts "Parent of #{getName} is null, no upper levels for restrictions, we can freely select m"
         end
         ret = m
       else
         # As this mode has a parent, we need to select a mode which is eligible in the context of the active mode at higher level
         # presenting the candidate as the candidate one, and the current mode as the alternative candidate
-        if debug
+        if false
           puts "Searching within the #{getParent.getSelectedMode.submodes.length} submodes of #{getParent.getName}"
           puts "selectedMode #{getSelectedMode.getName} #{m.getName}"
         end
@@ -1579,11 +1591,11 @@ class PORISNode < PORIS
       end
 
       if ret.nil?
-        if debug
+        if false
           puts "ERROR, we were not lucky, there was no way of selecting a mode (NULL after search)"
         end
       else
-        if debug
+        if false
           puts "Selected mode is #{ret.getName}"
         end
       end
@@ -1752,7 +1764,7 @@ class PORISNode < PORIS
   end
 
   def toRuby
-    puts ("Entramos por aquí PORISNode!!!")
+    # puts ("Entramos por aquí PORISNode!!!")
     ret = super
 
     thisident = self.getRubyIdent
@@ -1775,8 +1787,8 @@ class PORISNode < PORIS
 =end
     ret['constructor'] += "\t\tself.addItem(#{thisUnknownModeIdent})\n"
     ret['constructor'] += "\t\t#{thisUnknownModeIdent}.setIdent('UNKM_#{self.getIdent}')\n"
-    ret['constructor'] += "\t\t#{thisUnknownModeIdent}.setDescription('Unknown mode for S#{self.getDescription}')\n"
-    ret['constructor'] += "\t\t#{thisident}.addMode(#{thisUnknownModeIdent})\n"
+    ret['constructor'] += "\t\t#{thisUnknownModeIdent}.setDescription('Unknown mode for #{self.getRubyName}')\n"
+    ret['destinations'] += "\t\t#{thisident}.addMode(#{thisUnknownModeIdent})\n"
 
 =begin
     @mdAcquisitionMode_UNKNOWN.addSubMode(@mdShuffleLinesMode_UNKNOWN)
@@ -1784,8 +1796,10 @@ class PORISNode < PORIS
 
     @modes.each do |myid, mode|
       m_ret = mode.toRuby
+      ret['attributes'] += m_ret['attributes']
       ret['constructor'] += m_ret['constructor']
-      ret['constructor'] += "\t\t#{thisident}.addMode(#{mode.getRubyIdent})\n"
+      ret['destinations'] += m_ret['destinations']
+      ret['destinations'] += "\t\t#{thisident}.addMode(#{mode.getRubyIdent})\n"
     end
 
 =begin
@@ -1847,11 +1861,18 @@ class PORISNode < PORIS
 	end
 
     def set_ShuffleLinesDouble(data)
-        @prShuffleLines.getSelectedValuew.setData(data)
+        @prShuffleLines.getSelectedValue.setData(data)
 	end
 
 
 =end
+    ret['functions'] += "\tdef get_#{self.getRubyName}Mode\n"
+    ret['functions'] += "\t\t#{thisident}.getSelectedMode\n"
+    ret['functions'] += "\tend\n\n"
+
+    ret['functions'] += "\tdef set_#{self.getRubyName}Mode(mode)\n"
+    ret['functions'] += "\t\t#{thisident}.selectMode(mode)\n"
+    ret['functions'] += "\tend\n\n"
 
     return ret
   end
@@ -1887,12 +1908,12 @@ class PORISParam < PORISNode
   end
 
   def setEligibleValue
-    # puts "Entering PORISParam setEligibleValue #{name}" if debug
+    # puts "Entering PORISParam setEligibleValue #{name}" if false
     setValue(@selected_value)
   end
 
   def selectMode(m)
-    # puts "Entering PORISParam #{name}.selectMode(#{m.name})" if debug
+    # puts "Entering PORISParam #{name}.selectMode(#{m.name})" if false
 
     prev_mode = getSelectedMode
     ret = super(m)
@@ -1913,7 +1934,7 @@ class PORISParam < PORISNode
   end
 
   def getEligibleValue(v, current)
-    if debug
+    if false
       if v.nil?
         puts "Entering PORISParam getEligibleValue #{name} with NULL value"
       else
@@ -1923,7 +1944,7 @@ class PORISParam < PORISNode
     end
 
     if getSelectedMode.nil?
-      # puts "- selected_mode is NULL" if debug
+      # puts "- selected_mode is NULL" if false
       init
     end
 
@@ -1931,7 +1952,7 @@ class PORISParam < PORISNode
   end
 
   def setValue(v)
-    if debug
+    if false
       if v.nil?
         puts "Entering PORISParam setValue #{name} with NULL value"
       else
@@ -2036,14 +2057,13 @@ class PORISParam < PORISNode
   end
 
   def getRubyValueIdentPrefix
-    "@#{PORISValue.getRubyPrefix}#{self.getRubyModeNamePrefix}"
+    "@#{PORISValue.getRubyPrefix}#{self.getRubyValueNamePrefix}"
   end
 
 
   def toRuby
-    puts ("Entramos por aquí PARAM!!!")
+    # puts ("Entramos por aquí PARAM!!! " + self.getRubyIdent)
     ret = super
-
     thisident = self.getRubyIdent
     thisModeIdentPrefix = self.getRubyModeIdentPrefix
     thisUnknownModeIdent = thisModeIdentPrefix+"UNKNOWN"
@@ -2065,19 +2085,45 @@ class PORISParam < PORISNode
 =end
     ret['constructor'] += "\t\tself.addItem(#{thisUnknownValueIdent})\n"
     ret['constructor'] += "\t\t#{thisUnknownValueIdent}.setIdent('UNK_#{self.getIdent}')\n"
-    ret['constructor'] += "\t\t#{thisUnknownValueIdent}.setDescription('Unknown value for S#{self.getDescription}')\n"
-    ret['constructor'] += "\t\t#{thisident}.addValue(#{thisUnknownValueIdent})\n"
+    ret['constructor'] += "\t\t#{thisUnknownValueIdent}.setDescription('Unknown value for #{self.getRubyName}')\n"
+    ret['destinations'] += "\t\t#{thisident}.addValue(#{thisUnknownValueIdent})\n"
 
 =begin
     @mdShuffleLinesMode_UNKNOWN.addValue(@vlShuffleLines_UNKNOWN)
 =end
-    ret['constructor'] += "\t\t#{thisUnknownModeIdent}.addValue(#{thisUnknownValueIdent})\n"
+    ret['destinations'] += "\t\t#{thisUnknownModeIdent}.addValue(#{thisUnknownValueIdent})\n"
 
+    any_double = false
     @values.each do |myid, value|
-      puts("---------- Processing value #{value.getName} ---------")
+      # puts("---------- Processing value #{value.getName} ---------")
       m_ret = value.toRuby
+      ret['attributes'] += m_ret['attributes']
       ret['constructor'] += m_ret['constructor']
-      ret['constructor'] += "\t\t#{thisident}.addValue(#{value.getRubyIdent})\n"
+      ret['destinations'] += m_ret['destinations']
+      ret['destinations'] += "\t\t#{thisident}.addValue(#{value.getRubyIdent})\n"
+      if value.class == PORISValueFloat then
+        any_double = true
+      end
+    end
+
+    ret['functions'] += "\tdef get_#{self.getRubyName}\n"
+    ret['functions'] += "\t\t#{thisident}.getSelectedValue\n"
+    ret['functions'] += "\tend\n\n"
+
+    ret['functions'] += "\tdef set_#{self.getRubyName}(value)\n"
+    ret['functions'] += "\t\t#{thisident}.setValue(value)\n"
+    ret['functions'] += "\tend\n\n"
+
+    if any_double then
+      ret['functions'] += "\tdef get_#{self.getRubyName}Double\n"
+      ret['functions'] += "\t\tv = #{self.getRubyIdent}.getSelectedValue\n"
+      ret['functions'] += "\t\tv.class = PORISValueFloat\n"
+      ret['functions'] += "\t\tv.getData\n"
+      ret['functions'] += "\tend\n\n"
+
+      ret['functions'] += "\tdef set_#{self.getRubyName}Double(data)\n"
+      ret['functions'] += "\t\t#{self.getRubyIdent}.getSelectedValue.setData(data)\n"
+      ret['functions'] += "\tend\n\n"
     end
 
     return ret
@@ -2114,7 +2160,7 @@ class PORISSys < PORISNode
   end
 
   def selectMode(m)
-    if debug
+    if false
       puts "Entering in Sys selectMode for #{getName} with candidate mode #{m.getName}"
     end
 
@@ -2131,7 +2177,7 @@ class PORISSys < PORISNode
       end
     end
 
-    if debug
+    if false
       if m == ret
         puts "Candidate mode successfully applied: #{ret.getName}"
       else
@@ -2257,25 +2303,37 @@ class PORISSys < PORISNode
 
 
   def toRuby
-    puts ("Entramos por aquí SYS!!!!")
+    # puts ("Entramos por aquí SYS!!!!")
     ret = super
 
     thisident = self.getRubyIdent
     thisModeIdentPrefix = self.getRubyModeIdentPrefix
 
+    thisident = self.getRubyIdent
+    thisUnknownModeIdent = thisModeIdentPrefix+"UNKNOWN"
+
     @params.each do |myid, param|
-      puts("---------- Processing param #{param.getName} ---------")
+      # puts("---------- Processing param #{param.getName} ---------")
       m_ret = param.toRuby
+      ret['attributes'] += m_ret['attributes']
       ret['constructor'] += m_ret['constructor']
-      ret['constructor'] += "\t\t#{thisident}.addParam(#{param.getRubyIdent})\n"
+      ret['destinations'] += m_ret['destinations']
+      ret['destinations'] += "\t\t#{thisident}.addParam(#{param.getRubyIdent})\n"
+      paramModeIdentPrefix = param.getRubyModeIdentPrefix
+      paramUnknownModeIdent = paramModeIdentPrefix+"UNKNOWN"
+      ret['destinations'] += "\t\t#{thisUnknownModeIdent}.addSubMode(#{paramUnknownModeIdent})\n"
+      ret['functions'] += m_ret['functions']
     end
 
 
     @subsystems.each do |myid, ss|
-      puts("---------- Processing param #{ss.getName} ---------")
+      # puts("---------- Processing param #{ss.getName} ---------")
       m_ret = ss.toRuby
+      ret['attributes'] += m_ret['attributes']
       ret['constructor'] += m_ret['constructor']
-      ret['constructor'] += "\t\t#{thisident}.addSubsystem(#{ss.getRubyIdent})\n"
+      ret['destinations'] += m_ret['destinations']
+      ret['destinations'] += "\t\t#{thisident}.addSubsystem(#{ss.getRubyIdent})\n"
+      ret['functions'] += m_ret['functions']
     end
 
     return ret
@@ -2421,20 +2479,25 @@ class PORISDoc
   end
 
   def toRuby
-    ret = {}
-    ret['constructor'] = "require_relative 'PORIS'\n\n"
-
-    ret['constructor'] += "class #{self.root.getRubyName}PORIS < PORISDoc\n"
-    ret['constructor'] += "\tdef initialize(project_id)\n"
-    ret['constructor'] += "\t\tsuper(project_id)\n"
     rootNodeCode = self.root.toRuby
-    ret['constructor'] += rootNodeCode['constructor']
-    ret['constructor'] += "\tend\n"
-    ret['constructor'] += "end\n"
 
-    ret['constructor'] += "thismodel = #{self.root.getRubyName}PORIS.new(#{self.getProjectId})\n"
+    finalcode = "require_relative 'PORIS'\n\n"
 
-    return ret
+    finalcode += "class #{self.root.getRubyName}PORIS < PORISDoc\n"
+    finalcode += rootNodeCode['attributes']
+    finalcode += "\tdef initialize(project_id)\n"
+    finalcode += "\t\tsuper(project_id)\n"
+    finalcode += rootNodeCode['constructor']
+    finalcode += "\t\tself.setRoot(#{self.root.getRubyIdent})\n"
+    finalcode += rootNodeCode['destinations']
+    finalcode += "\tend\n"
+    finalcode += rootNodeCode['functions']
+    finalcode += "end\n\n"
+
+    finalcode += "thismodel = #{self.root.getRubyName}PORIS.new(#{self.getProjectId})\n"
+
+
+    return finalcode
 
   end
 end
