@@ -19,8 +19,6 @@ Redmine::Plugin.register :cosmosys_req_poris do
   require 'csys_poris'
 
   require 'PORIS'
-  # TODO: Remove this example
-  require 'ARCGenIIIPORIS'
 
   # Patches to the Redmine core.
   require 'csys_poris_project_patch'
