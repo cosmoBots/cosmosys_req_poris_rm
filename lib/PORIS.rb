@@ -2472,7 +2472,7 @@ class PORISDoc
       }
 
       # puts("checking "+ node_and_destinations.length.to_s)
-      finished = (node_and_destinations.length <= 0)
+      finished = (node_and_destinations.length <= 0) # || count > 10
       count += 1
     end
 

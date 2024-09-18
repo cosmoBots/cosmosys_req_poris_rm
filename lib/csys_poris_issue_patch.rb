@@ -145,7 +145,10 @@ module CosmosysIssuePorisPatch
         puts('--> '+ i + ' ' + items_dict[i][:elem].getName)
         issue = items_dict[i][:issue]
         elem = items_dict[i][:elem]
+        # puts("the issue is " + issue.id.to_s + " " + issue.csys.identifier+ " " + issue.subject)
+        # puts("the elem is " + elem.getIdent + " "+ elem.getName)
         issue.relations_to.each{|r|
+          #puts(r.issue_from_id.to_s+" -> "+r.issue_to_id.to_s+" t:"+r.relation_type)
           if r.relation_type == 'blocks' then
             otherissue = Issue.find(r.issue_from_id)
             # In the case the other side of the relationship is in another project
@@ -155,7 +158,8 @@ module CosmosysIssuePorisPatch
               otherelem = otherdict[:elem]
               if otherelem.class == PORISMode then
                 if elem.class == PORISMode then
-                  puts(otherelem.getName + " is submode of " + elem.getName )
+                  # puts(otherelem.getName + " is submode of " + elem.getName )
+                  # puts(otherelem.getIdent + " is submode of " + elem.getIdent )
                   elem.addSubMode(otherelem)
                 else
                   elem.addMode(otherelem)
@@ -181,7 +185,8 @@ module CosmosysIssuePorisPatch
       thiselement = self.createElement(model)
       if (thiselement != nil) then
         self.addPorisNode(thiselement, model)
-        items_dict[self.id.to_s] = { elem: thiselement, issue:self.issue }
+        # puts("Adding to items_dict "+ self.issue.subject + " with id " + self.issue.id.to_s + " the element with name" + thiselement.getName)
+        items_dict[self.issue.id.to_s] = { elem: thiselement, issue:self.issue }
 
         puts("root: " + root_issue.project.identifier + " " + root_issue.subject)
         puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
@@ -192,10 +197,10 @@ module CosmosysIssuePorisPatch
           puts("self: " + self.issue.project.identifier + " " + self.issue.subject)
           puts("c: " + c.project.identifier + " " + c.subject)
           frontier_node = (c.project != root_issue.project) && (c.parent != nil) && (c.parent.project == root_issue.project)
-          frontier_node_mode = (c.project != root_issue.project) && (c.parent != nil) && (c.parent.project != root_issue.project) && (c.parent.parent != nil) && ((c.tracker == @@prModetracker && (c.parent.parent.project == root_issue.project))) 
+          frontier_node_mode = (c.project != root_issue.project) && (c.parent != nil) && (c.parent.project != root_issue.project) && (c.parent.parent != nil) && ((c.tracker == @@prModetracker && (c.parent.parent.project == root_issue.project)))
           if across_sub_projects ||
             c.project == root_issue.project ||
-            c.parent == nil || 
+            c.parent == nil ||
             frontier_node || frontier_node_mode
             then
             puts("Ey! " + c.subject)
