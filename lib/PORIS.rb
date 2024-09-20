@@ -2437,11 +2437,12 @@ class PORISDoc
     ordered_list = []
 
     count = 0
+    last_length = node_and_destinations.length
 
     # puts ("---------------- LOOP STARTS HERE ----------------")
 
     while !finished
-      # puts ("---------------- LOOP STARTS HERE ---"+count.to_s+"-------------")
+      # puts ("---------------- LOOP STARTS HERlast_lengthE ---"+count.to_s+"-------------")
       nodes_without_destinations = []
       node_and_destinations.keys.each {|k|
         if (node_and_destinations[k].length <= 0) then
@@ -2472,7 +2473,12 @@ class PORISDoc
       }
 
       # puts("checking "+ node_and_destinations.length.to_s)
-      finished = (node_and_destinations.length <= 0) # || count > 10
+      new_length = node_and_destinations.length
+      finished = (new_length <= 0)  || (new_length == last_length)
+      if (new_length == last_length) then
+        puts "ERROR! vector is not decreasing while reordering!!!!"
+      end
+      last_length = new_length
       count += 1
     end
 
